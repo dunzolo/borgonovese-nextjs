@@ -39,6 +39,15 @@ export const navItems: NavItem[] = [
   // },
 ];
 
+export const navItemsRoot: NavItem[] = [
+  {
+    title: "Login",
+    href: "/admin",
+    icon: "user",
+    label: "Login",
+  },
+];
+
 export const footerAdminItems: NavItem[] = [
   {
     title: "Dashboard",
