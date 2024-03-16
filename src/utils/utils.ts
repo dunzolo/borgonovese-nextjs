@@ -10,7 +10,6 @@ import { SquadGroup } from "@/models/SquadGroup";
 export const dateFormatItalian = (date: string) => {
   const data = new Date(date);
 
-  //const opzioni = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
   const dataFormattata = data.toLocaleDateString("it-IT");
 
   // Trasformare la prima lettera del giorno in maiuscolo
@@ -78,20 +77,22 @@ export const updatePoints = async (
   );
 };
 
-
 export const getGroupedData = (data: SquadGroup[], category: string) => {
   // Filtra gli oggetti in base al campo "category"
-  const groupedDataEsordienti = data.reduce<{ [key: string]: SquadGroup[] }>((acc, curr) => {
-    if (curr.squad_id.category === category) {
-      const group = curr.squad_id.group;
-      // Verifica se acc[group] è già definito, altrimenti inizializza come array vuoto
-      if (!acc[group]) {
-        acc[group] = [];
+  const groupedDataEsordienti = data.reduce<{ [key: string]: SquadGroup[] }>(
+    (acc, curr) => {
+      if (curr.squad_id.category === category) {
+        const group = curr.squad_id.group;
+        // Verifica se acc[group] è già definito, altrimenti inizializza come array vuoto
+        if (!acc[group]) {
+          acc[group] = [];
+        }
+        acc[group].push(curr);
       }
-      acc[group].push(curr);
-    }
-    return acc;
-  }, {});
-  
+      return acc;
+    },
+    {}
+  );
+
   return groupedDataEsordienti;
-}
+};

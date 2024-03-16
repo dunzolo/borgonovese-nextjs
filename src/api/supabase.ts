@@ -61,11 +61,36 @@ export const getAllDays = async (): Promise<string[]> => {
 };
 
 export const getAllMatch = async (): Promise<MatchDatum[]> => {
-  const response = await supabase
+  const { data } = await supabase
     .from("match")
     .select("*, squad_home(*), squad_away(*)")
     .order("id", { ascending: true });
-  return response.data ?? [];
+
+  return data ?? [];
+};
+
+export const getAllMatchGroupByDay = async (): Promise<{
+  [key: string]: MatchDatum[];
+}> => {
+  const { data } = await supabase
+    .from("match")
+    .select("*, squad_home(*), squad_away(*)")
+    .order("id", { ascending: true });
+
+  if (data) {
+    // Creare un oggetto per raggruppare i dati per data
+    const groupedData: { [key: string]: MatchDatum[] } = {};
+    for (const row of data) {
+      const dataValue = row.day; // Assumendo che la colonna si chiami "data"
+      if (!groupedData[dataValue]) {
+        groupedData[dataValue] = [];
+      }
+      groupedData[dataValue].push(row);
+    }
+    return groupedData ?? [];
+  }
+
+  return {};
 };
 
 /**
