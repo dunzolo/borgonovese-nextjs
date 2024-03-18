@@ -1,13 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MatchDatum } from "@/models/Match";
-import { useState } from "react";
+import { timeFormatHoursMinutes } from "@/utils/utils";
 
 interface MatchClientProps {
   matchProps: MatchDatum;
 }
 
 export default function RowMatch({ matchProps }: MatchClientProps) {
-  const { squad_home, squad_away, day, field, outcome } = matchProps;
+  const { squad_home, squad_away, hour, field, outcome } = matchProps;
 
   return (
     <div>
@@ -19,7 +18,7 @@ export default function RowMatch({ matchProps }: MatchClientProps) {
       <div className="px-4 py-2 flex items-center justify-between text-sm font-bold">
         <div className="w-1/3">{squad_home.name}</div>
         <div className="rounded min-w-[55px] bg-gray-400 bg-opacity-50 text-center px-2 py-1">
-          {outcome ? outcome : "VS"}
+          {outcome ? outcome : timeFormatHoursMinutes(hour)}
         </div>
         <div className="w-1/3 text-end">{squad_away.name}</div>
       </div>
