@@ -10,7 +10,14 @@ import { SquadGroup } from "@/models/SquadGroup";
 export const dateFormatItalian = (date: string) => {
   const data = new Date(date);
 
-  const dataFormattata = data.toLocaleDateString("it-IT");
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  const dataFormattata = data.toLocaleDateString("it-IT", options);
 
   // Trasformare la prima lettera del giorno in maiuscolo
   const dataFormattataCapitalized =
@@ -49,7 +56,7 @@ export const updatePoints = async (
   squad.goal_difference = 0;
   squad.points = 0;
 
-  matchesBySquad.map((match: MatchDatum) => {
+  matchesBySquad.forEach((match: MatchDatum) => {
     //assegno i punteggi quando la partita cointiene un risultato
     if (match.score_home != null && match.score_away != null) {
       //verifico tramite booleano se la squadra ha giocato in casa oppure no per aggiornare la relativa classifica
