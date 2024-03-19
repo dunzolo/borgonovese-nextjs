@@ -22,10 +22,10 @@ export const MenuContextProvider = ({ children }: { children: ReactNode }) => {
       const categories = await getAllCategories();
 
       const data: NavItem[] = categories.map((category) => ({
-        title: `Categoria ${category.toLowerCase()}`,
-        href: `/categoria-${category.toLowerCase()}`,
+        title: `Classifica ${category.toLowerCase()}`,
+        href: `/classifiche/${category.toLowerCase()}`,
         icon: "user",
-        label: `Categoria ${category.toLowerCase()}`,
+        label: `Classifica ${category.toLowerCase()}`,
       }));
 
       setData(data);

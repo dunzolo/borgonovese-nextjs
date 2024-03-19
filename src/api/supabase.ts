@@ -147,6 +147,21 @@ export const getRankingByGroup = async (
   return responses;
 };
 
+export const getGroupsByCategory = async (category: string | undefined) => {
+  const response = await supabase
+    .from("squads")
+    .select("group")
+    .ilike("category", `%${category}%`);
+
+  if (response.data) {
+    const groups: string[] = response.data.map((entry) => entry.group);
+    const uniqueGroups = Array.from(new Set(groups)).sort();
+    return uniqueGroups;
+  }
+
+  return [];
+};
+
 /**
  * Recupera tutti i match in base alla giornata del calendario
  * @param date Data del calendario per cui vuoi filtrare
@@ -157,6 +172,18 @@ export const getMatchesByDate = async (date: string): Promise<Match> => {
     .from("match")
     .select("*, squad_home(*), squad_away(*)")
     .eq("day", date)
+    .order("id", { ascending: true });
+
+  return response.data ?? [];
+};
+
+export const getMatchesByCategory = async (
+  category: string | undefined
+): Promise<MatchDatum[]> => {
+  const response = await supabase
+    .from("match")
+    .select("*, squad_home!inner(*), squad_away!inner(*)")
+    .ilike("squad_home.category", `%${category}%`)
     .order("id", { ascending: true });
 
   return response.data ?? [];
