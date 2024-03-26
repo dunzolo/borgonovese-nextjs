@@ -131,10 +131,14 @@ export default function Home({ categories, matches }: Props) {
 
       {filterData.map((matchesForDate, index) => (
         <div key={index}>
-          <h2 className="text-center text-sm font-bold mb-2">
-            {dateFormatItalian(matchesForDate[0]?.day)}
-          </h2>
-          <Separator className="h-[2px]" />
+          {matchesForDate[0]?.day ? (
+            <>
+              <h2 className="text-center text-sm font-bold mb-2">
+                {dateFormatItalian(matchesForDate[0]?.day)}
+              </h2>
+              <Separator className="h-[2px]" />
+            </>
+          ) : null}
           {matchesForDate.map((match) => (
             <RowMatch key={match.id} matchProps={match} />
           ))}
