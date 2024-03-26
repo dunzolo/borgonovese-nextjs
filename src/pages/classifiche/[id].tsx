@@ -14,6 +14,7 @@ import { SquadGroup } from "@/models/SquadGroup";
 import { getMatchesByCategory } from "../../api/supabase";
 import { Match, MatchDatum } from "@/models/Match";
 import RowMatch from "@/components/row-match/row-match";
+import { handleRedirect } from "@/utils/supabase/redirect";
 
 type Props = {
   groups: SquadGroup[][];
@@ -25,6 +26,9 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const category = context.params?.id?.toString();
+  const responseRedirect = await handleRedirect(context);
+
+  if (responseRedirect.redirect) return responseRedirect;
 
   try {
     const groupsCategory = await getGroupsByCategory(category);

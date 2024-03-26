@@ -1,15 +1,22 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import BreadCrumb from "@/components/Breadcrumb";
 import { SquadClient } from "@/components/tables/squad-table/client";
-import DashboardLayout from '@/components/layouts/AdminLayout';
-import { getAllSquads } from '../../../api/supabase';
+import DashboardLayout from "@/components/layouts/AdminLayout";
+import { getAllSquads } from "../../../api/supabase";
 import { Squad } from "@/models/Squad";
+import { handleRedirect } from "@/utils/supabase/redirect";
 
 type Props = {
-  squads: Squad[]
-}
+  squads: Squad[];
+};
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const responseRedirect = await handleRedirect(context);
+
+  if (responseRedirect.redirect) return responseRedirect;
+
   try {
     const squads = await getAllSquads();
     return {
@@ -24,9 +31,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 };
 
-page.getLayout = (page: any) => (
-  <DashboardLayout>{page}</DashboardLayout>
-);
+page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
 const breadcrumbItems = [{ title: "Squadre", link: "/admin/squad" }];
 

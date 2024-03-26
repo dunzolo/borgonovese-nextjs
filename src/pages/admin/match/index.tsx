@@ -3,14 +3,21 @@ import BreadCrumb from "@/components/Breadcrumb";
 import DashboardLayout from "@/components/layouts/AdminLayout";
 import { MatchClient } from "@/components/tables/match-table/client";
 import { MatchDatum } from "@/models/Match";
-import { GetServerSideProps } from "next";
+import { handleRedirect } from "@/utils/supabase/redirect";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 type Props = {
   matches: MatchDatum[];
   categories: string[];
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const responseRedirect = await handleRedirect(context);
+
+  if (responseRedirect.redirect) return responseRedirect;
+
   try {
     const matches = await getAllMatch();
     const categories = await getAllCategories();

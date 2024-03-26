@@ -1,5 +1,5 @@
 // #REACT
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 // # LAYOUT
 import DashboardLayout from "@/components/layouts/AdminLayout";
 // #UI COMPONENTS
@@ -13,17 +13,24 @@ import { getRankingByGroup } from "@/api/supabase";
 import { SquadGroup } from "@/models/SquadGroup";
 // # UTILS
 import { getGroupedData } from "@/utils/utils";
+import { handleRedirect } from "@/utils/supabase/redirect";
 
 type Props = {
-  groups: SquadGroup[][]
+  groups: SquadGroup[][];
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const responseRedirect = await handleRedirect(context);
+
+  if (responseRedirect.redirect) return responseRedirect;
+
   try {
-    const groups = await getRankingByGroup(['A', 'B', 'C', 'D', 'E', 'F']);
+    const groups = await getRankingByGroup(["A", "B", "C", "D", "E", "F"]);
     return {
       props: {
-        groups
+        groups,
       },
     };
   } catch (error) {
@@ -36,7 +43,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
 page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default function page({ groups }: Props) {
-  const allData = (groups as SquadGroup[][]).flat().reduce<SquadGroup[]>((acc, curr) => acc.concat(curr), []);
+  const allData = (groups as SquadGroup[][])
+    .flat()
+    .reduce<SquadGroup[]>((acc, curr) => acc.concat(curr), []);
 
   const groupedDataEsordienti = getGroupedData(allData, "ESORDIENTI");
   const groupedData2013 = getGroupedData(allData, "2013");

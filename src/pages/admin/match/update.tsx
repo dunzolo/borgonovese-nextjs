@@ -7,7 +7,7 @@ import { MatchDatum } from "@/models/Match";
 // #UTILS
 import { dateFormatItalian } from "@/utils/utils";
 // #NEXT & REACT
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import React, { useState } from "react";
 // #UI COMPONENTS
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -24,12 +24,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { handleRedirect } from "@/utils/supabase/redirect";
 
 type Props = {
   daysProps: string[];
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const responseRedirect = await handleRedirect(context);
+
+  if (responseRedirect.redirect) return responseRedirect;
+
   try {
     const daysProps = await getAllDays();
     return {

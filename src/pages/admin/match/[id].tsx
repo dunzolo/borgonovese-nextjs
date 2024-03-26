@@ -4,6 +4,7 @@ import { MatchForm } from "@/components/forms/match-form";
 import { SingleMatchForm } from "@/components/forms/single-match-form";
 import DashboardLayout from "@/components/layouts/AdminLayout";
 import { Match, MatchDatum } from "@/models/Match";
+import { handleRedirect } from "@/utils/supabase/redirect";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 type Props = {
@@ -15,6 +16,9 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const id = context.params?.id?.toString();
+  const responseRedirect = await handleRedirect(context);
+
+  if (responseRedirect.redirect) return responseRedirect;
 
   try {
     return {
