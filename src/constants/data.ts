@@ -41,10 +41,10 @@ export const navItems: NavItem[] = [
 
 export const navItemsRoot: NavItem[] = [
   {
-    title: "Login",
-    href: "/admin",
-    icon: "user",
-    label: "Login",
+    title: "Home",
+    href: "/",
+    icon: "home",
+    label: "Home",
   },
 ];
 

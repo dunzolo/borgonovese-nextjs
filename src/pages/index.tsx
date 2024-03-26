@@ -95,7 +95,8 @@ export default function Home({ categories, matches }: Props) {
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8">
-      <h1 className="text-center">NOME DEL TORNEO</h1>
+      <h1 className="text-center">30° TORNEO NOTTURNO GIOVANILE</h1>
+      <h3 className="text-center !mt-0">Borgonovo Val Tidone</h3>
 
       <div className="grid grid-cols-2 w-full items-center gap-1.5">
         <div className="text-center">
@@ -136,7 +137,7 @@ export default function Home({ categories, matches }: Props) {
               <h2 className="text-center text-sm font-bold mb-2">
                 {dateFormatItalian(matchesForDate[0]?.day)}
               </h2>
-              <Separator className="h-[2px]" />
+              <Separator className="h-[2px] mb-2" />
             </>
           ) : null}
           {matchesForDate.map((match) => (

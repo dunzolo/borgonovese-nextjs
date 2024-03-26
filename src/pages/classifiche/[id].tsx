@@ -15,6 +15,7 @@ import { getMatchesByCategory } from "../../api/supabase";
 import { Match, MatchDatum } from "@/models/Match";
 import RowMatch from "@/components/row-match/row-match";
 import { handleRedirect } from "@/utils/supabase/redirect";
+import { dateFormatItalian, timeFormatHoursMinutes } from "@/utils/utils";
 
 type Props = {
   groups: SquadGroup[][];
@@ -51,23 +52,53 @@ page.getLayout = (page: any) => {
 };
 
 export default function page({ groups, matches, categoryProps }: Props) {
+  let bg_color: string;
+
+  switch (categoryProps.toLowerCase()) {
+    case "esordienti":
+      bg_color = "bg-green-500";
+      break;
+    case "2013":
+      bg_color = "bg-red-500";
+      break;
+    case "2014":
+      bg_color = "bg-yellow-500";
+      break;
+    case "2015":
+      bg_color = "bg-orange-500";
+      break;
+    case "2016":
+      bg_color = "bg_pink_500";
+      break;
+    default:
+      break;
+  }
+
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-4 md:p-8">
-        <div className="flex items-center justify-between space-y-2">
+        <div className="flex items-center justify-center space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
-            Classifica {categoryProps}
+            Categoria {categoryProps}
           </h2>
         </div>
         <Tabs defaultValue="classifica" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="classifica">Classifica</TabsTrigger>
-            <TabsTrigger value="partite">Partite</TabsTrigger>
+          <TabsList className="w-full">
+            <TabsTrigger className="w-1/2" value="classifica">
+              Classifica
+            </TabsTrigger>
+            <TabsTrigger className="w-1/2" value="partite">
+              Partite
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="classifica" className="space-y-4">
             {Object.entries(groups).map(([group, data]) => (
               <Card key={group}>
-                <CardHeader className="flex flex-row items-center justify-center space-y-0 p-2">
+                <CardHeader
+                  className={`flex flex-row items-center justify-center space-y-0 p-2 rounded-t-xl ${
+                    bg_color ?? ""
+                  }`}
+                >
                   <CardTitle className="text-sm font-medium">
                     GIRONE {data[0].squad_id.group}
                   </CardTitle>
@@ -83,7 +114,7 @@ export default function page({ groups, matches, categoryProps }: Props) {
           </TabsContent>
           <TabsContent value="partite" className="space-y-4">
             {matches.map((match) => (
-              <RowMatch key={match.id} matchProps={match} />
+              <RowMatch key={match.id} matchProps={match} showBgColor={false} />
             ))}
           </TabsContent>
         </Tabs>

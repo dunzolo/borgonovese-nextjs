@@ -11,6 +11,7 @@ import {
   FileText,
   HelpCircle,
   Image,
+  Home,
   Laptop,
   LayoutDashboardIcon,
   Loader2,
@@ -64,6 +65,7 @@ export const Icons = {
   laptop: Laptop,
   trophy: Trophy,
   pencil: Pencil,
+  home: Home,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
