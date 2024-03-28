@@ -103,3 +103,18 @@ export const getGroupedData = (data: SquadGroup[], category: string) => {
 
   return groupedDataEsordienti;
 };
+
+export const getBackgroundColorCard = (category: string) => {
+  switch (category.toLowerCase()) {
+    case "2011":
+      return "bg-[#00B050]";
+    case "2012":
+      return "bg-[#974806]";
+    case "2013":
+      return "bg-[#FF00FF]";
+    case "2014":
+      return "bg-[#FFC000]";
+    default:
+      return "";
+  }
+};

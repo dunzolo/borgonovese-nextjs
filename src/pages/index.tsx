@@ -80,19 +80,6 @@ export default function Home({ categories, matches }: Props) {
     )
   );
 
-  // const filterData = matches.filter(
-  //   (match) =>
-  //     (match.squad_home.name
-  //       .toLowerCase()
-  //       .includes(filterSquad.toLowerCase()) ||
-  //       match.squad_away.name
-  //         .toLowerCase()
-  //         .includes(filterSquad.toLowerCase())) &&
-  //     match.squad_home.category
-  //       .toLowerCase()
-  //       .includes(filterCategory.toLowerCase())
-  // );
-
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8">
       <h1 className="text-center">30° TORNEO NOTTURNO GIOVANILE</h1>
@@ -140,9 +127,11 @@ export default function Home({ categories, matches }: Props) {
               <Separator className="h-[2px] mb-2" />
             </>
           ) : null}
-          {matchesForDate.map((match) => (
-            <RowMatch key={match.id} matchProps={match} />
-          ))}
+          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+            {matchesForDate.map((match) => (
+              <RowMatch key={match.id} matchProps={match} />
+            ))}
+          </div>
         </div>
       ))}
     </div>
