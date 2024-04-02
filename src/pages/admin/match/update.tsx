@@ -30,6 +30,13 @@ type Props = {
   daysProps: string[];
 };
 
+const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
@@ -88,7 +95,7 @@ export default function Update({ daysProps }: Props) {
               {daysProps.map((day) => {
                 return (
                   <SelectItem key={day} value={day}>
-                    {dateFormatItalian(day)}
+                    {dateFormatItalian(day, options)}
                   </SelectItem>
                 );
               })}

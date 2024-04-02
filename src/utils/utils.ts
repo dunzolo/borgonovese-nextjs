@@ -3,19 +3,26 @@ import { Match, MatchDatum } from "@/models/Match";
 import { SquadGroup } from "@/models/SquadGroup";
 
 /**
+ * Genera lo slug usando il nome del torneo
+ * @param name nome del torneo
+ * @returns
+ */
+export const generateSlug = (name: string) => {
+  return name
+    .toLowerCase() // Converti la stringa in minuscolo
+    .replace(/[^\w\s-]/g, "") // Rimuovi caratteri non alfanumerici, spazi e trattini
+    .trim() // Rimuovi spazi iniziali e finali
+    .replace(/\s+/g, "-") // Sostituisci gli spazi con trattini
+    .replace(/-+/g, "-"); // Rimuovi eventuali doppi trattini
+};
+
+/**
  * Funzione che converte la data in formato italiano
  * @param date Data che vuoi convertire
  * @returns
  */
-export const dateFormatItalian = (date: string) => {
+export const dateFormatItalian = (date: string, options: Object) => {
   const data = new Date(date);
-
-  const options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  };
 
   const dataFormattata = data.toLocaleDateString("it-IT", options);
 

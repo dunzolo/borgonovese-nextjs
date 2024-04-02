@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { navItemsRoot } from "@/constants/data";
 import { MenuContextProvider, useMenuContext } from "@/contexts/menu_context";
 import { MenuIcon } from "lucide-react";
+import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
 // import { Playlist } from "../data/playlists";

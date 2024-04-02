@@ -1,13 +1,25 @@
 import { Match, MatchDatum } from "@/models/Match";
 import { Squad } from "@/models/Squad";
 import { SquadGroup } from "@/models/SquadGroup";
+import { Tournament } from "@/models/Tournament";
 import { supabase } from "@/supabase/supabase";
+
+/**
+ * Recupera l'elenco totale dei tornei creati dell'anno corrente
+ */
+export const getAllCurrentYearTournaments = async (year: number) => {
+  const response = await supabase
+    .from("tournaments")
+    .select("*")
+    .eq("year", year);
+  return response.data ?? [];
+};
 
 /**
  * Recuperare l'elenco di tutte le squadre presenti
  * @returns
  */
-export const getAllSquads = async () => {
+export const getAllSquads = async (): Promise<Tournament[]> => {
   const response = await supabase.from("squads").select("*");
   return response.data ?? [];
 };

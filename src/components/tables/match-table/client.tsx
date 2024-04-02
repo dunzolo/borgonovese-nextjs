@@ -42,6 +42,13 @@ interface MatchClientProps {
   categories: string[];
 }
 
+const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+
 export const MatchClient: React.FC<MatchClientProps> = ({
   data,
   categories,
@@ -128,7 +135,8 @@ export const MatchClient: React.FC<MatchClientProps> = ({
                       <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                           <CardTitle className="text-sm font-medium">
-                            📆&nbsp;{dateFormatItalian(singleMatch.day)}
+                            📆&nbsp;
+                            {dateFormatItalian(singleMatch.day, options)}
                             &nbsp;|&nbsp;
                             {timeFormatHoursMinutes(singleMatch.hour)}
                             <p className="text-xs text-muted-foreground pt-1">

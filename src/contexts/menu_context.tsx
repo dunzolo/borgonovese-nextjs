@@ -1,5 +1,6 @@
 import { getAllCategories } from "@/api/supabase";
 import { NavItem } from "@/types";
+import { useRouter } from "next/router";
 import {
   ReactNode,
   createContext,
@@ -17,13 +18,16 @@ const Context = createContext<ContextProps | undefined>(undefined);
 export const MenuContextProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<NavItem[]>([]);
 
+  const router = useRouter();
+  const { name } = router.query;
+
   useEffect(() => {
     const getData = async () => {
       const categories = await getAllCategories();
 
       const data: NavItem[] = categories.map((category) => ({
         title: `Classifica ${category.toLowerCase()}`,
-        href: `/classifiche/${category.toLowerCase()}`,
+        href: `/${name}/classifiche/${category.toLowerCase()}`,
         icon: "user",
         label: `Classifica ${category.toLowerCase()}`,
       }));
@@ -32,7 +36,7 @@ export const MenuContextProvider = ({ children }: { children: ReactNode }) => {
     };
 
     getData();
-  }, []);
+  }, [name]);
 
   return (
     <Context.Provider value={{ menu_items: data }}>{children}</Context.Provider>

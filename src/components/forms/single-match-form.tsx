@@ -28,14 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Match, MatchDatum } from "@/models/Match";
-import {
-  getMatchesBySquad,
-  getSquadsByGroup,
-  updateMatch,
-  updateResult,
-} from "@/api/supabase";
-import { SquadGroup } from "@/models/SquadGroup";
-import { dateFormatItalian, updatePoints } from "@/utils/utils";
+import { updateMatch } from "@/api/supabase";
 
 const BUTTON_TEXT_INSERT = "Inserisci";
 const BUTTON_TEXT_UPDATE = "Aggiorna";

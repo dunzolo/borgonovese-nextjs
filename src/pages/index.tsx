@@ -1,13 +1,12 @@
 import {
   getAllCategories,
-  getAllMatch,
   getAllMatchGroupByDay,
+  getAllCurrentYearTournaments,
 } from "@/api/supabase";
-import RootLayout from "@/components/layouts/RootLayout";
 import RowMatch from "@/components/row-match/row-match";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -19,21 +18,35 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Match, MatchDatum } from "@/models/Match";
+import { Tournament } from "@/models/Tournament";
 import { dateFormatItalian } from "@/utils/utils";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import Link from "next/link";
+import { generateSlug } from "../utils/utils";
 
 type Props = {
-  matches: { [key: string]: MatchDatum[] };
-  categories: string[];
+  currentTournaments: Tournament[];
+};
+
+const options = {
+  month: "long",
+  day: "numeric",
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
     return {
       props: {
-        matches: await getAllMatchGroupByDay(),
-        categories: await getAllCategories(),
+        currentTournaments: await getAllCurrentYearTournaments(
+          new Date().getFullYear()
+        ),
       },
     };
   } catch (error) {
@@ -43,97 +56,37 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 };
 
-Home.getLayout = (page: any) => {
-  return <RootLayout>{page}</RootLayout>;
-};
-
-export default function Home({ categories, matches }: Props) {
-  const [filterSquad, setFilterSquad] = useState("");
-  const [filterCategory, setFilterCategory] = useState("");
-
-  const handleFilterChangeSquad = (event: any) => {
-    const value = event.target.value;
-    setFilterSquad(value);
-  };
-
-  const handleFilterChangeCategory = (event: any) => {
-    if (event === "all") {
-      event = "";
-    }
-
-    setFilterCategory(event);
-  };
-
-  //Filtra i dati in base al campo "name" e "category"
-  const filterData = Object.entries(matches).map(([date, matchesForDate]) =>
-    matchesForDate.filter(
-      (match) =>
-        (match.squad_home.name
-          .toLowerCase()
-          .includes(filterSquad.toLowerCase()) ||
-          match.squad_away.name
-            .toLowerCase()
-            .includes(filterSquad.toLowerCase())) &&
-        match.squad_home.category
-          .toLowerCase()
-          .includes(filterCategory.toLowerCase())
-    )
-  );
-
+export default function Home({ currentTournaments }: Props) {
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8">
-      <h1 className="text-center">30° TORNEO NOTTURNO GIOVANILE</h1>
-      <h3 className="text-center !mt-0">Borgonovo Val Tidone</h3>
-
-      <div className="grid grid-cols-2 w-full items-center gap-1.5">
-        <div className="text-center">
-          <Label>Nome squadra</Label>
-          <Input
-            type="text"
-            placeholder="Nome della squadra"
-            value={filterSquad}
-            onChange={handleFilterChangeSquad}
-          />
-        </div>
-        <div className="text-center">
-          <Label>Categoria</Label>
-          <Select onValueChange={handleFilterChangeCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona la categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="all">Tutte</SelectItem>
-                {categories.map((category) => {
-                  return (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  );
-                })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {filterData.map((matchesForDate, index) => (
-        <div key={index}>
-          {matchesForDate[0]?.day ? (
-            <>
-              <h2 className="text-center text-sm font-bold mb-2">
-                {dateFormatItalian(matchesForDate[0]?.day)}
-              </h2>
-              <Separator className="h-[2px] mb-2" />
-            </>
-          ) : null}
-          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
-            {matchesForDate.map((match) => (
-              <RowMatch key={match.id} matchProps={match} />
-            ))}
-          </div>
-        </div>
-      ))}
+    <div className="container flex-1 space-y-4 p-4 md:p-8">
+      <h1 className="text-center">Tornei</h1>
+      <Accordion type="single" defaultValue="item-1" collapsible>
+        <AccordionItem value="item-1">
+          <AccordionTrigger>{new Date().getFullYear()}</AccordionTrigger>
+          <AccordionContent className="pb-0">
+            {currentTournaments?.map((tournament) => {
+              return (
+                <Link key={tournament.id} href={generateSlug(tournament.name)}>
+                  <Card className="mb-3">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-2xl font-bold">
+                        {tournament.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-sm font-medium">
+                        📆 Dal{" "}
+                        {dateFormatItalian(tournament.date_start, options)} al{" "}
+                        {dateFormatItalian(tournament.date_end, options)}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 }

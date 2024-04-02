@@ -38,6 +38,13 @@ import {
 const BUTTON_TEXT_INSERT = "Inserisci";
 const BUTTON_TEXT_UPDATE = "Aggiorna";
 
+const options = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+
 const formSchema = z.object({
   //utilizzo coerce per validazione su campo input di tipo numerico
   score_home: z.coerce
@@ -146,7 +153,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
           <Card key={null}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                🗓&nbsp;{dateFormatItalian(day)}&nbsp;|&nbsp;
+                🗓&nbsp;{dateFormatItalian(day, options)}&nbsp;|&nbsp;
                 {timeFormatHoursMinutes(hour)}
                 <p className="text-xs text-muted-foreground pt-1">
                   Categoria:&nbsp;

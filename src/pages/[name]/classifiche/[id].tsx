@@ -11,15 +11,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getGroupsByCategory, getRankingByGroup } from "@/api/supabase";
 // # MODELS
 import { SquadGroup } from "@/models/SquadGroup";
-import { getMatchesByCategory } from "../../api/supabase";
-import { Match, MatchDatum } from "@/models/Match";
+import { getMatchesByCategory } from "../../../api/supabase";
+import { MatchDatum } from "@/models/Match";
 import RowMatch from "@/components/row-match/row-match";
-import { handleRedirect } from "@/utils/supabase/redirect";
-import {
-  dateFormatItalian,
-  getBackgroundColorCard,
-  timeFormatHoursMinutes,
-} from "@/utils/utils";
+import { getBackgroundColorCard } from "@/utils/utils";
 
 type Props = {
   groups: SquadGroup[][];
