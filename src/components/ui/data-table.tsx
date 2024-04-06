@@ -19,6 +19,7 @@ import {
 import { Input } from "./input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea, ScrollBar } from "./scroll-area";
+import Image from "next/image";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -96,8 +97,9 @@ export function DataTable<TData, TValue>({
       </div>
 
       <ScrollArea
-        className={`rounded-md border ${isRanking ? "" : "h-[calc(80vh-225px)]"
-          }`}
+        className={`rounded-md border ${
+          isRanking ? "" : "h-[calc(80vh-225px)]"
+        }`}
       >
         <Table className="relative">
           <TableHeader>
@@ -109,9 +111,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   );
                 })}
@@ -127,9 +129,23 @@ export function DataTable<TData, TValue>({
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {cell.column.columnDef.header == "LOGO" ? (
+                        cell.getValue() ? (
+                          <Image
+                            src={cell.getValue() as string}
+                            alt={"logo"}
+                            width={50}
+                            height={50}
+                            className="w-1/2"
+                          />
+                        ) : (
+                          ""
+                        )
+                      ) : (
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )
                       )}
                     </TableCell>
                   ))}

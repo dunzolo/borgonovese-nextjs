@@ -48,7 +48,11 @@ export default function RowMatch({
             <CardHeader className="rounded-t-xl bg-muted px-4 py-2">
               <CardTitle className="text-sm font-medium flex justify-between">
                 <span>📆 {dateFormatItalian(day, options)}</span>
-                <span>GIRONE {squad_home.group}</span>
+                <span>
+                  {squad_home.show_label_group
+                    ? "GIRONE " + squad_home.group
+                    : ""}
+                </span>
               </CardTitle>
             </CardHeader>
           </>

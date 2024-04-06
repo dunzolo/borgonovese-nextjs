@@ -3,6 +3,7 @@ import { Squad } from "@/models/Squad";
 import { SquadGroup } from "@/models/SquadGroup";
 import { Tournament } from "@/models/Tournament";
 import { supabase } from "@/supabase/supabase";
+import { translateGroup } from "@/utils/utils";
 
 /**
  * Recupera l'elenco totale dei tornei creati dell'anno corrente
@@ -28,8 +29,11 @@ export const getAllSquads = async (): Promise<Tournament[]> => {
  * Recupera le categorie dalla risposta della query e rimuovi i duplicati
  * @returns
  */
-export const getAllCategories = async (): Promise<string[]> => {
-  const response = await supabase.from("squads").select("category");
+export const getAllCategories = async (slug: string): Promise<string[]> => {
+  const response = await supabase
+    .from("squads")
+    .select("category, tournament_id!inner(*)")
+    .eq("tournament_id.slug", slug);
 
   if (response.data) {
     const categories: string[] = response.data.map((entry) => entry.category);
@@ -81,12 +85,15 @@ export const getAllMatch = async (): Promise<MatchDatum[]> => {
   return data ?? [];
 };
 
-export const getAllMatchGroupByDay = async (): Promise<{
+export const getAllMatchGroupByDay = async (
+  slug: string
+): Promise<{
   [key: string]: MatchDatum[];
 }> => {
   const { data } = await supabase
     .from("match")
-    .select("*, squad_home(*), squad_away(*)")
+    .select("*, squad_home(*), squad_away(*), tournament_id!inner(*)")
+    .eq("tournament_id.slug", slug)
     .order("id", { ascending: true });
 
   if (data) {
@@ -149,10 +156,11 @@ export const getRankingByGroup = async (
   const responses = await Promise.all(
     groups.map(async (group) => {
       const { data } = await supabase
-        .from(`group_${group}`)
+        .from(`group_${translateGroup(group)}`)
         .select("*, squad_id(*)")
         .order("points", { ascending: false })
         .order("goal_difference", { ascending: false });
+
       return data as SquadGroup[];
     })
   );

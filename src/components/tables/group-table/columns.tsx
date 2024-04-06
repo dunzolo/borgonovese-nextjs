@@ -4,7 +4,7 @@ import { SquadGroup } from "@/models/SquadGroup";
 
 export const columns: ColumnDef<SquadGroup>[] = [
   {
-    accessorKey: "logo",
+    accessorKey: "squad_id.logo",
     header: "LOGO",
   },
   {
@@ -13,7 +13,7 @@ export const columns: ColumnDef<SquadGroup>[] = [
   },
   {
     accessorKey: "points",
-    header: "PUNTI",
+    header: "PT",
   },
   {
     accessorKey: "goal_scored",

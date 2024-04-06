@@ -43,8 +43,8 @@ export const getServerSideProps: GetServerSideProps = async (
   try {
     return {
       props: {
-        matches: await getAllMatchGroupByDay(),
-        categories: await getAllCategories(),
+        matches: await getAllMatchGroupByDay(slug as string),
+        categories: await getAllCategories(slug as string),
       },
     };
   } catch (error) {

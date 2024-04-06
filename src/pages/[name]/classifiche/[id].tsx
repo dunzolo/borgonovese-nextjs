@@ -76,7 +76,9 @@ export default function page({ groups, matches, categoryProps }: Props) {
                   }`}
                 >
                   <CardTitle className="text-sm font-medium">
-                    GIRONE {data[0].squad_id.group}
+                    {data[0].squad_id.show_label_group
+                      ? "GIRONE " + data[0].squad_id.group
+                      : "GIRONE"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-2">

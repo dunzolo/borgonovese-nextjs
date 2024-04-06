@@ -23,7 +23,7 @@ export const MenuContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const getData = async () => {
-      const categories = await getAllCategories();
+      const categories = await getAllCategories(name as string);
 
       const data: NavItem[] = categories.map((category) => ({
         title: `Classifica ${category.toLowerCase()}`,

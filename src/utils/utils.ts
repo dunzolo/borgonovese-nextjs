@@ -121,7 +121,18 @@ export const getBackgroundColorCard = (category: string) => {
       return "bg-[#FF00FF]";
     case "2014":
       return "bg-[#FFC000]";
+    case "professionisti maschile":
+      return "bg-[#05A9EE]";
     default:
       return "";
+  }
+};
+
+export const translateGroup = (group: string) => {
+  switch (group.toLowerCase()) {
+    case "professionisti maschile":
+      return "professional_men";
+    default:
+      return group;
   }
 };
