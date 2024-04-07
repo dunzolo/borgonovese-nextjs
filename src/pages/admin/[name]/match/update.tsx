@@ -25,9 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { handleRedirect } from "@/utils/supabase/redirect";
+import { useParams } from "next/navigation";
 
 type Props = {
   daysProps: string[];
+  slug: string;
 };
 
 const options = {
@@ -41,14 +43,16 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const responseRedirect = await handleRedirect(context);
+  const slug = context.params?.name?.toString();
 
   if (responseRedirect.redirect) return responseRedirect;
 
   try {
-    const daysProps = await getAllDays();
+    const daysProps = await getAllDays(slug as string);
     return {
       props: {
         daysProps,
+        slug,
       },
     };
   } catch (error) {
@@ -60,10 +64,10 @@ export const getServerSideProps: GetServerSideProps = async (
 
 Update.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
-export default function Update({ daysProps }: Props) {
+export default function Update({ daysProps, slug }: Props) {
   const breadcrumbItems = [
-    { title: "Match", link: "/admin/match" },
-    { title: "Inserisci risultati", link: "/admin/match/update" },
+    { title: "Match", link: `/admin/${slug}/match` },
+    { title: "Inserisci risultati", link: `/admin/${slug}/match/update` },
   ];
 
   const [selectedDay, setSelectedDay] = useState<MatchDatum[]>([]);

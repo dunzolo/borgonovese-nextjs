@@ -1,13 +1,15 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getAllCategories, getAllMatch } from "@/api/supabase";
 import BreadCrumb from "@/components/Breadcrumb";
-import { SquadClient } from "@/components/tables/squad-table/client";
 import DashboardLayout from "@/components/layouts/AdminLayout";
-import { getAllSquads } from "../../../api/supabase";
-import { Squad } from "@/models/Squad";
+import { MatchClient } from "@/components/tables/match-table/client";
+import { MatchDatum } from "@/models/Match";
 import { handleRedirect } from "@/utils/supabase/redirect";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 type Props = {
-  squads: Squad[];
+  matches: MatchDatum[];
+  categories: string[];
+  slug: string;
 };
 
 export const getServerSideProps: GetServerSideProps = async (
@@ -17,11 +19,14 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (responseRedirect.redirect) return responseRedirect;
 
+  const slug = context.params?.name?.toString();
+
   try {
-    const squads = await getAllSquads();
     return {
       props: {
-        squads,
+        matches: await getAllMatch(slug as string),
+        categories: await getAllCategories(slug as string),
+        slug,
       },
     };
   } catch (error) {
@@ -33,14 +38,13 @@ export const getServerSideProps: GetServerSideProps = async (
 
 page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
-const breadcrumbItems = [{ title: "Squadre", link: "/admin/squad" }];
-
-export default function page({ squads }: Props) {
+export default function page({ matches, categories, slug }: Props) {
+  const breadcrumbItems = [{ title: "Match", link: `/admin/${slug}/match` }];
   return (
     <>
       <div className="flex-1 space-y-4  p-4 md:p-8">
         <BreadCrumb items={breadcrumbItems} />
-        <SquadClient data={squads} />
+        <MatchClient data={matches} categories={categories} slug={slug} />
       </div>
     </>
   );

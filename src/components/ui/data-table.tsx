@@ -136,7 +136,6 @@ export function DataTable<TData, TValue>({
                             alt={"logo"}
                             width={50}
                             height={50}
-                            className="w-1/2"
                           />
                         ) : (
                           ""

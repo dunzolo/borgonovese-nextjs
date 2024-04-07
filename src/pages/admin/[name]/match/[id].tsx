@@ -10,6 +10,7 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 type Props = {
   match: Match;
   fieldsProps: string[];
+  slug: string;
 };
 
 export const getServerSideProps: GetServerSideProps = async (
@@ -25,6 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (
       props: {
         match: id ? await getMatchesById(id) : null,
         fieldsProps: await getAllDistinctFields(),
+        slug: context.params?.name?.toString(),
       },
     };
   } catch (err) {
@@ -38,10 +40,10 @@ MatchPage.getLayout = (MatchPage: any) => (
   <DashboardLayout>{MatchPage}</DashboardLayout>
 );
 
-export default function MatchPage({ match, fieldsProps }: Props) {
+export default function MatchPage({ match, fieldsProps, slug }: Props) {
   const breadcrumbItems = [
-    { title: "Match", link: "/admin/match" },
-    { title: "Modifica match", link: `/admin/match/${match[0].id}` },
+    { title: "Match", link: `/admin/${slug}/match` },
+    { title: "Modifica match", link: `/admin/${slug}/match/${match[0].id}` },
   ];
 
   return (

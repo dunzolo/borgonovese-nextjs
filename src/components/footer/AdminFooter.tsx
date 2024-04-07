@@ -1,17 +1,32 @@
 import { cn } from "@/lib/utils";
 import { NavItem } from "@/types";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { Icons } from "../Icons";
 import { Dispatch, SetStateAction } from "react";
 
 interface DashboardNavProps {
-  items: NavItem[];
   setOpen?: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function AdminFooter({ items, setOpen }: DashboardNavProps) {
+export default function AdminFooter({ setOpen }: DashboardNavProps) {
   const path = usePathname();
+  const { name } = useParams();
+
+  const items = [
+    {
+      title: "Dashboard",
+      href: "/admin",
+      icon: "dashboard",
+      label: "Dashboard",
+    },
+    {
+      title: "Aggiungi",
+      href: `/admin/${name}/match/update`,
+      icon: "pencil",
+      label: "Aggiungi",
+    },
+  ] as NavItem[];
 
   if (!items?.length) {
     return null;
@@ -36,7 +51,7 @@ export default function AdminFooter({ items, setOpen }: DashboardNavProps) {
                     className={cn(
                       "group flex flex-col items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
                       path === item.href ? "bg-accent" : "transparent",
-                      item.disabled && "cursor-not-allowed opacity-80",
+                      item.disabled && "cursor-not-allowed opacity-80"
                     )}
                   >
                     <Icon className="h-4 w-4" />

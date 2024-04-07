@@ -1,30 +1,27 @@
-import { getAllCategories, getAllMatch } from "@/api/supabase";
-import BreadCrumb from "@/components/Breadcrumb";
-import DashboardLayout from "@/components/layouts/AdminLayout";
-import { MatchClient } from "@/components/tables/match-table/client";
-import { MatchDatum } from "@/models/Match";
-import { handleRedirect } from "@/utils/supabase/redirect";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import BreadCrumb from "@/components/Breadcrumb";
+import { SquadClient } from "@/components/tables/squad-table/client";
+import DashboardLayout from "@/components/layouts/AdminLayout";
+import { getAllSquads } from "../../../../api/supabase";
+import { Squad } from "@/models/Squad";
+import { handleRedirect } from "@/utils/supabase/redirect";
 
 type Props = {
-  matches: MatchDatum[];
-  categories: string[];
+  squads: Squad[];
 };
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const responseRedirect = await handleRedirect(context);
+  const slug = context.params?.name?.toString();
 
   if (responseRedirect.redirect) return responseRedirect;
 
   try {
-    const matches = await getAllMatch();
-    const categories = await getAllCategories();
     return {
       props: {
-        matches,
-        categories,
+        squads: await getAllSquads(slug as string),
       },
     };
   } catch (error) {
@@ -36,14 +33,14 @@ export const getServerSideProps: GetServerSideProps = async (
 
 page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
-const breadcrumbItems = [{ title: "Match", link: "/admin/match" }];
+const breadcrumbItems = [{ title: "Squadre", link: "/admin/squad" }];
 
-export default function page({ matches, categories }: Props) {
+export default function page({ squads }: Props) {
   return (
     <>
       <div className="flex-1 space-y-4  p-4 md:p-8">
         <BreadCrumb items={breadcrumbItems} />
-        <MatchClient data={matches} categories={categories} />
+        <SquadClient data={squads} />
       </div>
     </>
   );

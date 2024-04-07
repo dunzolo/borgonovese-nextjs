@@ -158,8 +158,12 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
                 <p className="text-xs text-muted-foreground pt-1">
                   Categoria:&nbsp;
                   <span className="font-bold">{squad_home.category}</span>
-                  &nbsp;-&nbsp;Girone:&nbsp;
-                  <span className="font-bold">{squad_home.group}</span>
+                  {squad_home.show_label_group ? (
+                    <>
+                      &nbsp;-&nbsp;Girone:&nbsp;
+                      <span className="font-bold">{squad_home.group}</span>
+                    </>
+                  ) : null}
                 </p>
               </CardTitle>
             </CardHeader>

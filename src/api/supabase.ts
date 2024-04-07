@@ -20,8 +20,11 @@ export const getAllCurrentYearTournaments = async (year: number) => {
  * Recuperare l'elenco di tutte le squadre presenti
  * @returns
  */
-export const getAllSquads = async (): Promise<Tournament[]> => {
-  const response = await supabase.from("squads").select("*");
+export const getAllSquads = async (slug: string): Promise<Tournament[]> => {
+  const response = await supabase
+    .from("squads")
+    .select("*, tournament_id!inner(*)")
+    .eq("tournament_id.slug", slug);
   return response.data ?? [];
 };
 
@@ -64,8 +67,11 @@ export const getAllDistinctFields = async (): Promise<string[]> => {
  * Recupera i giorni dalla risposta della query e rimuovi i duplicati
  * @returns
  */
-export const getAllDays = async (): Promise<string[]> => {
-  const response = await supabase.from("match").select("day");
+export const getAllDays = async (slug: string): Promise<string[]> => {
+  const response = await supabase
+    .from("match")
+    .select("day, tournament_id!inner(*)")
+    .eq("tournament_id.slug", slug);
 
   if (response.data) {
     const days: string[] = response.data.map((entry) => entry.day);
@@ -76,10 +82,11 @@ export const getAllDays = async (): Promise<string[]> => {
   return [];
 };
 
-export const getAllMatch = async (): Promise<MatchDatum[]> => {
+export const getAllMatch = async (slug: string): Promise<MatchDatum[]> => {
   const { data } = await supabase
     .from("match")
-    .select("*, squad_home(*), squad_away(*)")
+    .select("*, squad_home(*), squad_away(*), tournament_id!inner(*)")
+    .eq("tournament_id.slug", slug)
     .order("id", { ascending: true });
 
   return data ?? [];

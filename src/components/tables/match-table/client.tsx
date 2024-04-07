@@ -40,6 +40,7 @@ import Link from "next/link";
 interface MatchClientProps {
   data: MatchDatum[];
   categories: string[];
+  slug: string;
 }
 
 const options = {
@@ -52,6 +53,7 @@ const options = {
 export const MatchClient: React.FC<MatchClientProps> = ({
   data,
   categories,
+  slug,
 }) => {
   const [filterSquad, setFilterSquad] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
@@ -80,8 +82,6 @@ export const MatchClient: React.FC<MatchClientProps> = ({
         .toLowerCase()
         .includes(filterCategory.toLowerCase())
   );
-
-  const router = useRouter();
 
   return (
     <>
@@ -144,10 +144,14 @@ export const MatchClient: React.FC<MatchClientProps> = ({
                               <span className="font-bold">
                                 {singleMatch.squad_home.category}
                               </span>
-                              &nbsp;-&nbsp;Girone:&nbsp;
-                              <span className="font-bold">
-                                {singleMatch.squad_home.group}
-                              </span>
+                              {singleMatch.squad_home.show_label_group ? (
+                                <>
+                                  &nbsp;-&nbsp;Girone:&nbsp;
+                                  <span className="font-bold">
+                                    {singleMatch.squad_home.group}
+                                  </span>
+                                </>
+                              ) : null}
                             </p>
                           </CardTitle>
                         </CardHeader>
@@ -185,7 +189,9 @@ export const MatchClient: React.FC<MatchClientProps> = ({
                       {!singleMatch.score_home || !singleMatch.score_away ? (
                         <DialogFooter>
                           <Button asChild>
-                            <Link href={`/admin/match/${singleMatch.id}`}>
+                            <Link
+                              href={`/admin/${slug}/match/${singleMatch.id}`}
+                            >
                               Modifica match
                             </Link>
                           </Button>
