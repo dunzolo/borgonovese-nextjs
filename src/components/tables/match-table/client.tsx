@@ -36,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
+import Image from "next/image";
 
 interface MatchClientProps {
   data: MatchDatum[];
@@ -156,13 +157,29 @@ export const MatchClient: React.FC<MatchClientProps> = ({
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="text-2xl font-bold">
-                            {singleMatch.squad_home.name}&nbsp;
-                            {singleMatch.score_home}
+                          <div className="flex items-center text-2xl font-bold">
+                            <Image
+                              src={singleMatch.squad_home.logo}
+                              alt={singleMatch.squad_home.name.toLowerCase()}
+                              width={50}
+                              height={50}
+                            />
+                            <div className="flex justify-between w-full">
+                              <span>{singleMatch.squad_home.name}</span>
+                              <span>{singleMatch.score_home}</span>
+                            </div>
                           </div>
-                          <div className="text-2xl font-bold">
-                            {singleMatch.squad_away.name}&nbsp;
-                            {singleMatch.score_away}
+                          <div className="flex items-center text-2xl font-bold">
+                            <Image
+                              src={singleMatch.squad_away.logo}
+                              alt={singleMatch.squad_away.name.toLowerCase()}
+                              width={50}
+                              height={50}
+                            />
+                            <div className="flex justify-between w-full">
+                              <span>{singleMatch.squad_away.name}</span>
+                              <span>{singleMatch.score_away}</span>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>

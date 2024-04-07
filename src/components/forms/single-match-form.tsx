@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { Match, MatchDatum } from "@/models/Match";
 import { updateMatch } from "@/api/supabase";
+import Image from "next/image";
 
 const BUTTON_TEXT_INSERT = "Inserisci";
 const BUTTON_TEXT_UPDATE = "Aggiorna";
@@ -36,7 +37,7 @@ const BUTTON_TEXT_UPDATE = "Aggiorna";
 const formSchema = z.object({
   day: z.string(),
   hour: z.string(),
-  field: z.string(),
+  field: z.string().nullable(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -103,17 +104,43 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
       <Separator />
       <div>
         <p className="text-muted-foreground">
-          ➡️ Categoria:{" "}
-          <span className="font-bold">{initialData.squad_home.category}</span> -
-          Girone:{" "}
-          <span className="font-bold">{initialData.squad_home.group}</span>
+          Categoria:{" "}
+          <span className="font-bold">{initialData.squad_home.category}</span>
+          {initialData.squad_home.show_label_group ? (
+            <>
+              - Girone:{" "}
+              <span className="font-bold">{initialData.squad_home.group}</span>
+            </>
+          ) : null}
         </p>
-        <p>
+        <div className="flex items-center text-2xl font-bold">
+          <Image
+            src={initialData.squad_home.logo}
+            alt={initialData.squad_home.name.toLowerCase()}
+            width={50}
+            height={50}
+          />
+          <div className="flex justify-between w-full">
+            <span>{initialData.squad_home.name}</span>
+          </div>
+        </div>
+        <div className="flex items-center text-2xl font-bold">
+          <Image
+            src={initialData.squad_away.logo}
+            alt={initialData.squad_away.name.toLowerCase()}
+            width={50}
+            height={50}
+          />
+          <div className="flex justify-between w-full">
+            <span>{initialData.squad_away.name}</span>
+          </div>
+        </div>
+        {/* <p>
           {initialData.squad_home.name} {initialData.score_home}
         </p>
         <p>
           {initialData.squad_away.name} {initialData.score_away}
-        </p>
+        </p> */}
       </div>
       <Separator />
       <Form {...form}>
@@ -174,13 +201,13 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
+                    value={field.value ?? undefined}
+                    defaultValue={field.value ?? null}
                   >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          defaultValue={field.value}
+                          defaultValue={field.value ?? undefined}
                           placeholder="Scegli il campo"
                         />
                       </SelectTrigger>
