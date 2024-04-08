@@ -21,12 +21,12 @@ export const getServerSideProps: GetServerSideProps = async (
   if (responseRedirect.redirect) return responseRedirect;
 
   try {
-    const categoriesProps = await getAllCategories();
-    const squadsProps = await getAllSquads();
+    // const categoriesProps = await getAllCategories();
+    // const squadsProps = await getAllSquads();
     return {
       props: {
-        categoriesProps,
-        squadsProps,
+        // categoriesProps,
+        // squadsProps,
       },
     };
   } catch (error) {
