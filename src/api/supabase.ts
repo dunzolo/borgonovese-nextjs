@@ -289,7 +289,7 @@ export const updateMatch = async (
   id: string,
   day: string,
   hour: string,
-  field: string | null
+  field?: string
 ) => {
   const response = await supabase
     .from("match")

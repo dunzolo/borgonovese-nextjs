@@ -34,6 +34,7 @@ import Image from "next/image";
 const BUTTON_TEXT_INSERT = "Inserisci";
 const BUTTON_TEXT_UPDATE = "Aggiorna";
 
+// TODO: tipicizzazione sul campo field nullable
 const formSchema = z.object({
   day: z.string(),
   hour: z.string(),
@@ -82,7 +83,12 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
     try {
       setLoading(true);
 
-      await updateMatch(initialData.id, data.day, data.hour, data.field);
+      await updateMatch(
+        initialData.id,
+        data.day,
+        data.hour,
+        data.field !== null ? data.field : undefined
+      );
 
       if (action == BUTTON_TEXT_INSERT) {
         setAction(BUTTON_TEXT_UPDATE);
@@ -119,6 +125,7 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
             alt={initialData.squad_home.name.toLowerCase()}
             width={50}
             height={50}
+            // className="w-full h-auto"
           />
           <div className="flex justify-between w-full">
             <span>{initialData.squad_home.name}</span>
@@ -126,10 +133,11 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
         </div>
         <div className="flex items-center text-2xl font-bold">
           <Image
-            src={initialData.squad_away.logo}
+            src={initialData.squad_home.logo}
             alt={initialData.squad_away.name.toLowerCase()}
-            width={50}
-            height={50}
+            width={512}
+            height={512}
+            className="w-12 h-12"
           />
           <div className="flex justify-between w-full">
             <span>{initialData.squad_away.name}</span>
@@ -201,13 +209,17 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
                   <Select
                     disabled={loading}
                     onValueChange={field.onChange}
-                    value={field.value ?? undefined}
-                    defaultValue={field.value ?? null}
+                    value={field.value !== null ? field.value : undefined}
+                    defaultValue={
+                      field.value !== null ? field.value : undefined
+                    }
                   >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          defaultValue={field.value ?? undefined}
+                          defaultValue={
+                            field.value !== null ? field.value : undefined
+                          }
                           placeholder="Scegli il campo"
                         />
                       </SelectTrigger>
