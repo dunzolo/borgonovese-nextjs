@@ -70,6 +70,10 @@
   * {
     @apply border-border;
   }
+  html {
+    text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+  }
   body {
     @apply bg-background text-foreground box-border;
   }
