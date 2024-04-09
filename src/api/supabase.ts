@@ -101,7 +101,7 @@ export const getAllMatchGroupByDay = async (
     .from("match")
     .select("*, squad_home(*), squad_away(*), tournament_id!inner(*)")
     .eq("tournament_id.slug", slug)
-    .order("id", { ascending: true });
+    .order("hour", { ascending: true });
 
   if (data) {
     // Creare un oggetto per raggruppare i dati per data
@@ -163,7 +163,7 @@ export const getRankingByGroup = async (
   const responses = await Promise.all(
     groups.map(async (group) => {
       const { data } = await supabase
-        .from(`group_${translateGroup(group)}`)
+        .from(`group_${group}`)
         .select("*, squad_id(*)")
         .order("points", { ascending: false })
         .order("goal_difference", { ascending: false });

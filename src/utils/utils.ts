@@ -123,6 +123,10 @@ export const getBackgroundColorCard = (category: string) => {
       return "bg-[#FFC000]";
     case "professionisti maschile":
       return "bg-[#05A9EE]";
+    case "professionisti femminile":
+      return "bg-[#FF66CC]";
+    case "dilettanti":
+      return "bg-[#0B8640]";
     default:
       return "";
   }
@@ -132,6 +136,10 @@ export const translateGroup = (group: string) => {
   switch (group.toLowerCase()) {
     case "professionisti maschile":
       return "professional_men";
+    case "professionisti femminile":
+      return "professional_girls";
+    case "dilettanti":
+      return "amateurs";
     default:
       return group;
   }
