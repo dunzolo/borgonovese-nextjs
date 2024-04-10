@@ -1,7 +1,9 @@
 import {
   getAllCategories,
+  getAllDistinctSquads,
   getAllMatch,
   getAllMatchGroupByDay,
+  getAllSquads,
   getTournament,
 } from "@/api/supabase";
 import RootLayout from "@/components/layouts/RootLayout";
@@ -20,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Match, MatchDatum } from "@/models/Match";
+import { Squad } from "@/models/Squad";
 import { Tournament } from "@/models/Tournament";
 import { dateFormatItalian } from "@/utils/utils";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
@@ -29,6 +32,7 @@ type Props = {
   matches: { [key: string]: MatchDatum[] };
   categories: string[];
   tournament: Tournament[];
+  squads: string[];
 };
 
 const options = {
@@ -48,6 +52,7 @@ export const getServerSideProps: GetServerSideProps = async (
       props: {
         matches: await getAllMatchGroupByDay(slug as string),
         categories: await getAllCategories(slug as string),
+        squads: await getAllDistinctSquads(slug as string),
         tournament: await getTournament(slug as string),
       },
     };
@@ -62,13 +67,20 @@ Home.getLayout = (page: any) => {
   return <RootLayout>{page}</RootLayout>;
 };
 
-export default function Home({ categories, matches, tournament }: Props) {
+export default function Home({
+  categories,
+  matches,
+  tournament,
+  squads,
+}: Props) {
   const [filterSquad, setFilterSquad] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
 
   const handleFilterChangeSquad = (event: any) => {
-    const value = event.target.value;
-    setFilterSquad(value);
+    if (event === "all") {
+      event = "";
+    }
+    setFilterSquad(event);
   };
 
   const handleFilterChangeCategory = (event: any) => {
@@ -105,12 +117,23 @@ export default function Home({ categories, matches, tournament }: Props) {
       <div className="grid grid-cols-2 w-full items-center gap-1.5">
         <div className="text-center">
           <Label>Nome squadra</Label>
-          <Input
-            type="text"
-            placeholder="Nome della squadra"
-            value={filterSquad}
-            onChange={handleFilterChangeSquad}
-          />
+          <Select onValueChange={handleFilterChangeSquad}>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleziona la squadra" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectItem value="all">Tutte</SelectItem>
+                {squads.map((squad) => {
+                  return (
+                    <SelectItem key={squad} value={squad}>
+                      {squad}
+                    </SelectItem>
+                  );
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
         <div className="text-center">
           <Label>Categoria</Label>

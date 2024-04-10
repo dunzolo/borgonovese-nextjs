@@ -41,6 +41,26 @@ export const getAllSquads = async (slug: string): Promise<Tournament[]> => {
 };
 
 /**
+ * Recuperare l'elenco di tutte le squadre presenti
+ * @returns
+ */
+export const getAllDistinctSquads = async (slug: string): Promise<string[]> => {
+  const response = await supabase
+    .from("squads")
+    .select("*, tournament_id!inner(*)")
+    .eq("tournament_id.slug", slug);
+  
+    if (response.data) {
+      const squads: string[] = response.data.map((entry) => entry.name);
+      const uniqueSquad = Array.from(new Set(squads)).sort();
+      return uniqueSquad;
+    }
+  
+    return [];
+
+};
+
+/**
  * Recupera le categorie dalla risposta della query e rimuovi i duplicati
  * @returns
  */
