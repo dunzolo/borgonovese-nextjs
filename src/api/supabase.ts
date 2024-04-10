@@ -92,6 +92,11 @@ export const getAllMatch = async (slug: string): Promise<MatchDatum[]> => {
   return data ?? [];
 };
 
+/**
+ * Recupera tutte le partite del torneo suddivise per giorno, ordinate per giorno ed ora
+ * @param slug slug del torneo di riferimento
+ * @returns 
+ */
 export const getAllMatchGroupByDay = async (
   slug: string
 ): Promise<{
@@ -101,6 +106,7 @@ export const getAllMatchGroupByDay = async (
     .from("match")
     .select("*, squad_home(*), squad_away(*), tournament_id!inner(*)")
     .eq("tournament_id.slug", slug)
+    .order("day", { ascending: true })
     .order("hour", { ascending: true });
 
   if (data) {
