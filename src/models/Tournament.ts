@@ -8,4 +8,5 @@ export interface Tournament {
   date_end: string;
   background_image: string;
   created_at: string;
+  slug: string;
 }

@@ -2,6 +2,7 @@ import {
   getAllCategories,
   getAllMatch,
   getAllMatchGroupByDay,
+  getTournament,
 } from "@/api/supabase";
 import RootLayout from "@/components/layouts/RootLayout";
 import RowMatch from "@/components/row-match/row-match";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Match, MatchDatum } from "@/models/Match";
+import { Tournament } from "@/models/Tournament";
 import { dateFormatItalian } from "@/utils/utils";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useState } from "react";
@@ -26,6 +28,7 @@ import { useState } from "react";
 type Props = {
   matches: { [key: string]: MatchDatum[] };
   categories: string[];
+  tournament: Tournament[];
 };
 
 const options = {
@@ -45,6 +48,7 @@ export const getServerSideProps: GetServerSideProps = async (
       props: {
         matches: await getAllMatchGroupByDay(slug as string),
         categories: await getAllCategories(slug as string),
+        tournament: await getTournament(slug as string),
       },
     };
   } catch (error) {
@@ -58,7 +62,7 @@ Home.getLayout = (page: any) => {
   return <RootLayout>{page}</RootLayout>;
 };
 
-export default function Home({ categories, matches }: Props) {
+export default function Home({ categories, matches, tournament }: Props) {
   const [filterSquad, setFilterSquad] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
 
@@ -93,8 +97,10 @@ export default function Home({ categories, matches }: Props) {
 
   return (
     <div className="container flex-1 space-y-4 p-4 md:p-8">
-      <h1 className="text-center">30° TORNEO NOTTURNO GIOVANILE</h1>
-      <h3 className="text-center !mt-0">Borgonovo Val Tidone</h3>
+      <h1 className="text-center text-2xl font-bold">
+        {tournament.at(0)?.name}
+      </h1>
+      <h3 className="text-center !mt-0">{tournament.at(0)?.description}</h3>
 
       <div className="grid grid-cols-2 w-full items-center gap-1.5">
         <div className="text-center">

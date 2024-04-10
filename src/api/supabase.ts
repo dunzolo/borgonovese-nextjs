@@ -6,6 +6,18 @@ import { supabase } from "@/supabase/supabase";
 import { translateGroup } from "@/utils/utils";
 
 /**
+ * Recupera il torneo corrente
+ */
+export const getTournament = async (slug: string) => {
+  const response = await supabase
+    .from("tournaments")
+    .select("*")
+    .eq("slug", slug);
+
+  return response.data ?? [];
+};
+
+/**
  * Recupera l'elenco totale dei tornei creati dell'anno corrente
  */
 export const getAllCurrentYearTournaments = async (year: number) => {

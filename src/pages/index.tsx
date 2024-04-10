@@ -2,6 +2,7 @@ import {
   getAllCategories,
   getAllMatchGroupByDay,
   getAllCurrentYearTournaments,
+  getAllSquads,
 } from "@/api/supabase";
 import RowMatch from "@/components/row-match/row-match";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +22,7 @@ import { Match, MatchDatum } from "@/models/Match";
 import { Tournament } from "@/models/Tournament";
 import { dateFormatItalian } from "@/utils/utils";
 import { GetServerSideProps } from "next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/accordion";
 import Link from "next/link";
 import { generateSlug } from "../utils/utils";
+import Image from "next/image";
 
 type Props = {
   currentTournaments: Tournament[];
@@ -59,26 +61,59 @@ export const getServerSideProps: GetServerSideProps = async () => {
 export default function Home({ currentTournaments }: Props) {
   return (
     <div className="container flex-1 space-y-4 p-4 md:p-8">
-      <h1 className="text-center">Tornei</h1>
+      <h1 className="text-center text-4xl font-bold">Tornei</h1>
       <Accordion type="single" defaultValue="item-1" collapsible>
         <AccordionItem value="item-1">
           <AccordionTrigger>{new Date().getFullYear()}</AccordionTrigger>
           <AccordionContent className="pb-0">
             {currentTournaments?.map((tournament) => {
+              const [categories, setCategoryCount] = useState<string[]>([]);
+              const [squads, setSquadCount] = useState<Tournament[]>([]);
+
+              useEffect(() => {
+                const fetchData = async () => {
+                  try {
+                    const countCategories = await getAllCategories(
+                      tournament.slug
+                    );
+                    const countSquads = await getAllSquads(tournament.slug);
+                    setCategoryCount(countCategories);
+                    setSquadCount(countSquads);
+                  } catch (error) {
+                    console.error("Error fetching category count:", error);
+                  }
+                };
+
+                fetchData();
+              }, [tournament.slug]);
+
               return (
                 <Link key={tournament.id} href={generateSlug(tournament.name)}>
                   <Card className="mb-3">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-2xl font-bold">
+                      <CardTitle className="text-xl font-bold">
                         {tournament.name}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="flex justify-between">
                       <div className="text-sm font-medium">
-                        📆 Dal{" "}
-                        {dateFormatItalian(tournament.date_start, options)} al{" "}
-                        {dateFormatItalian(tournament.date_end, options)}
+                        <div>
+                          🗓 Dal{" "}
+                          {dateFormatItalian(tournament.date_start, options)} al{" "}
+                          {dateFormatItalian(tournament.date_end, options)}
+                        </div>
+                        <div>
+                          ⚽️ {categories.length} categorie - {squads.length}{" "}
+                          squadre
+                        </div>
                       </div>
+                      <Image
+                        src={tournament.logo}
+                        alt="logo"
+                        width={512}
+                        height={512}
+                        className="w-16 h-16"
+                      />
                     </CardContent>
                   </Card>
                 </Link>
