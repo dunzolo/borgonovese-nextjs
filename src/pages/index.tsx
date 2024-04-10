@@ -58,6 +58,54 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 };
 
+export const TournamentCard = ({ tournament }: { tournament: Tournament }) => {
+  const [categories, setCategoryCount] = useState<string[]>([]);
+  const [squads, setSquadCount] = useState<Tournament[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const countCategories = await getAllCategories(tournament.slug);
+        const countSquads = await getAllSquads(tournament.slug);
+        setCategoryCount(countCategories);
+        setSquadCount(countSquads);
+      } catch (error) {
+        console.error("Error fetching category count:", error);
+      }
+    };
+
+    fetchData();
+  }, [tournament.slug]);
+
+  return (
+    <Link href={generateSlug(tournament.name)}>
+      <Card className="mb-3">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-xl font-bold">{tournament.name}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex justify-between">
+          <div className="text-sm font-medium">
+            <div>
+              🗓 Dal {dateFormatItalian(tournament.date_start, options)} al{" "}
+              {dateFormatItalian(tournament.date_end, options)}
+            </div>
+            <div>
+              ⚽️ {categories.length} categorie - {squads.length} squadre
+            </div>
+          </div>
+          <Image
+            src={tournament.logo}
+            alt="logo"
+            width={512}
+            height={512}
+            className="w-16 h-16"
+          />
+        </CardContent>
+      </Card>
+    </Link>
+  );
+};
+
 export default function Home({ currentTournaments }: Props) {
   return (
     <div className="container flex-1 space-y-4 p-4 md:p-8">
@@ -67,56 +115,8 @@ export default function Home({ currentTournaments }: Props) {
           <AccordionTrigger>{new Date().getFullYear()}</AccordionTrigger>
           <AccordionContent className="pb-0">
             {currentTournaments?.map((tournament) => {
-              const [categories, setCategoryCount] = useState<string[]>([]);
-              const [squads, setSquadCount] = useState<Tournament[]>([]);
-
-              useEffect(() => {
-                const fetchData = async () => {
-                  try {
-                    const countCategories = await getAllCategories(
-                      tournament.slug
-                    );
-                    const countSquads = await getAllSquads(tournament.slug);
-                    setCategoryCount(countCategories);
-                    setSquadCount(countSquads);
-                  } catch (error) {
-                    console.error("Error fetching category count:", error);
-                  }
-                };
-
-                fetchData();
-              }, [tournament.slug]);
-
               return (
-                <Link key={tournament.id} href={generateSlug(tournament.name)}>
-                  <Card className="mb-3">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-xl font-bold">
-                        {tournament.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex justify-between">
-                      <div className="text-sm font-medium">
-                        <div>
-                          🗓 Dal{" "}
-                          {dateFormatItalian(tournament.date_start, options)} al{" "}
-                          {dateFormatItalian(tournament.date_end, options)}
-                        </div>
-                        <div>
-                          ⚽️ {categories.length} categorie - {squads.length}{" "}
-                          squadre
-                        </div>
-                      </div>
-                      <Image
-                        src={tournament.logo}
-                        alt="logo"
-                        width={512}
-                        height={512}
-                        className="w-16 h-16"
-                      />
-                    </CardContent>
-                  </Card>
-                </Link>
+                <TournamentCard key={tournament.id} tournament={tournament} />
               );
             })}
           </AccordionContent>
