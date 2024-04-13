@@ -114,7 +114,7 @@ export default function Home({
       </h1>
       <h3 className="text-center !mt-0">{tournament.at(0)?.description}</h3>
 
-      <div className="grid grid-cols-2 w-full items-center gap-1.5">
+      <div className="grid grid-cols-2 w-full items-center gap-1.5 sticky top-[56px] bg-white z-[2] pb-2">
         <div className="text-center">
           <Label>Nome squadra</Label>
           <Select onValueChange={handleFilterChangeSquad}>
@@ -160,14 +160,14 @@ export default function Home({
       {filterData.map((matchesForDate, index) => (
         <div key={index}>
           {matchesForDate[0]?.day ? (
-            <>
+            <div className="sticky top-[120px] bg-white z-[1]">
               <h2 className="text-center text-sm font-bold mb-2">
                 {dateFormatItalian(matchesForDate[0]?.day, options)}
               </h2>
               <Separator className="h-[2px] mb-2" />
-            </>
+            </div>
           ) : null}
-          <div className="grid gap-2 md:grid-cols-2">
+          <div className="grid gap-2 md:grid-cols-2 place-items-center">
             {matchesForDate.map((match) => (
               <RowMatch key={match.id} matchProps={match} />
             ))}

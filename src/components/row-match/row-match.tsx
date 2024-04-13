@@ -38,7 +38,7 @@ export default function RowMatch({
     <>
       <Card
         className={clsx(
-          "rounded-xl  mb-2 relative bg-opacity-90",
+          "rounded-xl w-[99%] mb-2 relative bg-opacity-90",
           style_header,
           bg_color
         )}
