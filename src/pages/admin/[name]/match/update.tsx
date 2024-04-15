@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { handleRedirect } from "@/utils/supabase/redirect";
 import { useParams } from "next/navigation";
+import { Label } from "@/components/ui/label";
 
 type Props = {
   daysProps: string[];
@@ -78,7 +79,7 @@ export default function Update({ daysProps, slug }: Props) {
   };
 
   return (
-    <ScrollArea className="h-full">
+    <div>
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
 
@@ -90,29 +91,32 @@ export default function Update({ daysProps, slug }: Props) {
         </div>
         <Separator />
 
-        <Select onValueChange={handleSelectDay}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Seleziona la giornata" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {daysProps.map((day) => {
-                return (
-                  <SelectItem key={day} value={day}>
-                    {dateFormatItalian(day, options)}
-                  </SelectItem>
-                );
-              })}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="sticky top-[56px] z-[1] bg-white !mt-0 py-3">
+          <Label>Seleziona la giornata</Label>
+          <Select onValueChange={handleSelectDay}>
+            <SelectTrigger className="w-full md:w-1/4">
+              <SelectValue placeholder="Seleziona" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {daysProps.map((day) => {
+                  return (
+                    <SelectItem key={day} value={day}>
+                      {dateFormatItalian(day, options)}
+                    </SelectItem>
+                  );
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
 
-        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-8">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 w-[95%] mx-auto !mb-[64px]">
           {selectedDay.map((item) => {
             return <MatchForm initialData={item} key={item.id} />;
           })}
         </div>
       </div>
-    </ScrollArea>
+    </div>
   );
 }

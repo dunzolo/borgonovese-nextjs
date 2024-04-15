@@ -9,7 +9,7 @@ const DashboardLayout = ({ children }: any) => {
   return (
     <MenuContextProvider>
       <AdminHeader />
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen">
         <AdminSidebar />
         <main className="w-full pt-16">{children}</main>
         <Toaster />

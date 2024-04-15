@@ -323,6 +323,24 @@ export const createMatch = async (
   ]);
 };
 
+export const createGroup = async (
+  group: string,
+  id: number
+) => {
+  console.log(id);
+
+  const response = await supabase.from(group).insert([
+    {
+      squad_id: id,
+      points: 0,
+      goal_scored: 0,
+      goal_conceded: 0,
+      goal_difference: 0,
+    },
+  ]);
+
+};
+
 export const updateMatch = async (
   id: string,
   day: string,

@@ -138,7 +138,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
     } finally {
       setTimeout(() => {
         setLoading(false);
-        router.refresh();
+        // router.refresh();
       }, 1500);
     }
   };
@@ -167,8 +167,8 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
                 </p>
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex w-full items-center justify-between space-x-2 mb-3">
+            <CardContent className="p-4 pt-0">
+              <div className="flex w-full items-center justify-between space-x-2 mb-2">
                 <span>{squad_home.name}</span>
                 <FormField
                   control={form.control}
@@ -183,7 +183,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
                   )}
                 />
               </div>
-              <div className="flex w-full items-center justify-between space-x-2 mb-3">
+              <div className="flex w-full items-center justify-between space-x-2 mb-2">
                 <span>{squad_away.name}</span>
                 <FormField
                   control={form.control}
@@ -198,9 +198,11 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
                   )}
                 />
               </div>
-              <Button disabled={loading} className="w-full" type="submit">
-                {action}
-              </Button>
+              <div className="flex justify-center">
+                <Button disabled={loading} className="w-1/2" type="submit">
+                  {action}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </form>
