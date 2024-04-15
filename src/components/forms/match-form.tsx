@@ -32,7 +32,8 @@ import { SquadGroup } from "@/models/SquadGroup";
 import {
   dateFormatItalian,
   timeFormatHoursMinutes,
-  updatePoints,
+  updatePointsSquadHome,
+  updatePointsSquadAway,
 } from "@/utils/utils";
 
 const BUTTON_TEXT_INSERT = "Inserisci";
@@ -115,10 +116,8 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
         squad_away.id
       );
 
-      // aggiorno il punteggio della classifica del girone
-      // i valori true e false servono per conteggaire correttamente i goal segnati dalle squadre
-      updatePoints(matchesBySquadHome, squadHome[0], squad_home.group, true);
-      updatePoints(matchesBySquadAway, squadAway[0], squad_away.group, false);
+      updatePointsSquadHome(matchesBySquadHome, squadHome[0], squad_home.group);
+      updatePointsSquadAway(matchesBySquadAway, squadAway[0], squad_away.group);
 
       if (action == BUTTON_TEXT_INSERT) {
         setAction(BUTTON_TEXT_UPDATE);

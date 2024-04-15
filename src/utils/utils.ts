@@ -49,13 +49,11 @@ export const timeFormatHoursMinutes = (time: string) => {
  * @param matchesBySquad array di tutte le partite del torneo della squadra
  * @param squad squadra per cui devo aggiornare i dati della classfica
  * @param group girone della squadra
- * @param isHomeSquad valore per indicare se è squadra casalinga
  */
-export const updatePoints = async (
+export const updatePointsSquadHome = async (
   matchesBySquad: Match,
   squad: SquadGroup,
   group: string,
-  isHomeSquad: boolean
 ) => {
   //azzero ogni volta il punteggio per gestire le modifiche dei punteggi delle partite
   squad.goal_scored = 0;
@@ -67,13 +65,58 @@ export const updatePoints = async (
     //assegno i punteggi quando la partita cointiene un risultato
     if (match.score_home != null && match.score_away != null) {
       //verifico tramite booleano se la squadra ha giocato in casa oppure no per aggiornare la relativa classifica
-      squad.goal_scored += isHomeSquad ? match.score_home : match.score_away;
-      squad.goal_conceded += isHomeSquad ? match.score_away : match.score_home;
-      squad.goal_difference += squad.goal_scored - squad.goal_conceded;
+      squad.goal_scored += match.score_home;
+      squad.goal_conceded += match.score_away;
+      squad.goal_difference += (match.score_home - match.score_away);
 
-      if (squad.goal_scored > squad.goal_conceded) {
+      if (match.score_home > match.score_away) {
         squad.points += 3;
-      } else if (squad.goal_scored == squad.goal_conceded) {
+      } else if (match.score_home === match.score_away) {
+        squad.points += 1;
+      } else {
+        squad.points += 0;
+      }
+    }
+  });
+
+  const response = await updatePointsGroup(
+    group,
+    squad.id,
+    squad.points,
+    squad.goal_scored,
+    squad.goal_conceded,
+    squad.goal_difference
+  );
+};
+
+/**
+ * Funzione che aggiorna i punteggi del girone in base ai goal realizzati
+ * @param matchesBySquad array di tutte le partite del torneo della squadra
+ * @param squad squadra per cui devo aggiornare i dati della classfica
+ * @param group girone della squadra
+ */
+export const updatePointsSquadAway = async (
+  matchesBySquad: Match,
+  squad: SquadGroup,
+  group: string,
+) => {
+  //azzero ogni volta il punteggio per gestire le modifiche dei punteggi delle partite
+  squad.goal_scored = 0;
+  squad.goal_conceded = 0;
+  squad.goal_difference = 0;
+  squad.points = 0;
+
+  matchesBySquad.forEach((match: MatchDatum) => {
+    //assegno i punteggi quando la partita cointiene un risultato
+    if (match.score_home != null && match.score_away != null) {
+      //verifico tramite booleano se la squadra ha giocato in casa oppure no per aggiornare la relativa classifica
+      squad.goal_scored += match.score_away;
+      squad.goal_conceded += match.score_home;
+      squad.goal_difference += (match.score_away - match.score_home);
+
+      if (match.score_away > match.score_home) {
+        squad.points += 3;
+      } else if (match.score_home === match.score_away) {
         squad.points += 1;
       } else {
         squad.points += 0;

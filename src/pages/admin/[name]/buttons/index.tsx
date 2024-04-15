@@ -72,12 +72,13 @@ export default function page({ squads }: Props) {
     event.preventDefault();
     const groups = await getRankingByGroup(["E", "F"]);
     await generateGroup(groups, "group_final_2013");
+    console.log(await getSquadsByGroup("final_2013"));
   };
 
   return (
     <div className="container">
-      <div className="grid grid-cols-2">
-        <div className="text-center">
+      <div className="grid md:grid-cols-2">
+        <div className="text-center mb-3">
           <Heading
             title={`Girone finale 2014`}
             description="crea il girone finale per i 2014"
@@ -88,7 +89,7 @@ export default function page({ squads }: Props) {
             </Button>
           </form>
         </div>
-        <div className="text-center">
+        <div className="text-center mb-3">
           <Heading
             title={`Girone finale 2013`}
             description="crea il girone finale per i 2013"

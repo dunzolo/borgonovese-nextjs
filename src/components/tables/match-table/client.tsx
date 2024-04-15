@@ -142,8 +142,6 @@ export const MatchClient: React.FC<MatchClientProps> = ({
       <div className="w-[99%] mx-auto grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data &&
           filterData.map((singleMatch) => {
-            console.log(singleMatch.id, !singleMatch.score_home);
-            console.log(singleMatch.id, !singleMatch.score_away);
             return (
               <Dialog key={singleMatch.id}>
                 <DialogTrigger asChild>

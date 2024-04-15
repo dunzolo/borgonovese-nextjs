@@ -204,7 +204,8 @@ export const getRankingByGroup = async (
         .from(`group_${group}`)
         .select("*, squad_id(*)")
         .order("points", { ascending: false })
-        .order("goal_difference", { ascending: false });
+        .order("goal_difference", { ascending: false })
+        .order("goal_scored", { ascending: false })
 
       return data as SquadGroup[];
     })
@@ -327,8 +328,6 @@ export const createGroup = async (
   group: string,
   id: number
 ) => {
-  console.log(id);
-
   const response = await supabase.from(group).insert([
     {
       squad_id: id,
