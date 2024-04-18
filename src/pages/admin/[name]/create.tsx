@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import {
   createMatch,
   getAllCategories,
+  getAllMatch,
   getSquadsByCategory,
+  getTournament,
 } from "@/api/supabase";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { MatchDatum } from "@/models/Match";
@@ -10,6 +12,7 @@ import { Squad } from "@/models/Squad";
 
 type Props = {
   categories: string[];
+  slug: string;
 };
 
 export const getServerSideProps: GetServerSideProps = async (
@@ -21,6 +24,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return {
       props: {
         categories,
+        slug,
       },
     };
   } catch (error) {
@@ -30,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 };
 
-export default function Create({ categories }: Props) {
+export default function Create({ categories, slug }: Props) {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subcategories, setSubcategories] = useState<Squad[]>([]);
 
@@ -65,9 +69,19 @@ export default function Create({ categories }: Props) {
 
   async function handleSubmitMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const matches = await getAllMatch();
+    const tournament = await getTournament(slug as string);
 
     const { day, hour, squad_home, squad_away, field } = form;
-    await createMatch(day, hour, squad_home.id, squad_away.id, field);
+    await createMatch(
+      matches.length + 1,
+      day,
+      hour,
+      squad_home.id,
+      squad_away.id,
+      tournament[0].id,
+      field
+    );
   }
 
   const handleSelectCategory = async (

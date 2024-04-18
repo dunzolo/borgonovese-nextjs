@@ -1,12 +1,9 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import BreadCrumb from "@/components/Breadcrumb";
-import { SquadClient } from "@/components/tables/squad-table/client";
 import DashboardLayout from "@/components/layouts/AdminLayout";
 import {
   createGroup,
   getAllSquads,
   getRankingByGroup,
-  getSquadsByGroup,
 } from "../../../../api/supabase";
 import { Squad } from "@/models/Squad";
 import { handleRedirect } from "@/utils/supabase/redirect";
@@ -14,9 +11,11 @@ import { Button } from "@/components/ui/button";
 import { FormEvent } from "react";
 import { Heading } from "@/components/ui/heading";
 import { SquadGroup } from "@/models/SquadGroup";
+import { NewMatchForm } from "./getNewMatchForm";
 
 type Props = {
   squads: Squad[];
+  slug: string;
 };
 
 export const getServerSideProps: GetServerSideProps = async (
@@ -31,6 +30,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return {
       props: {
         squads: await getAllSquads(slug as string),
+        slug,
       },
     };
   } catch (error) {
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
 page.getLayout = (page: any) => <DashboardLayout>{page}</DashboardLayout>;
 
-export default function page({ squads }: Props) {
+export default function page({ slug }: Props) {
   const generateGroup = async (groups: SquadGroup[][], name: string) => {
     //recupero la prima e la seconda classificata del primo girone
     const first_team_first_group = parseInt(groups[0][0].squad_id.id);
@@ -72,7 +72,6 @@ export default function page({ squads }: Props) {
     event.preventDefault();
     const groups = await getRankingByGroup(["E", "F"]);
     await generateGroup(groups, "group_final_2013");
-    console.log(await getSquadsByGroup("final_2013"));
   };
 
   return (
@@ -101,6 +100,8 @@ export default function page({ squads }: Props) {
           </form>
         </div>
       </div>
+
+      <NewMatchForm slug={slug} group={"final_2013"} />
     </div>
   );
 }

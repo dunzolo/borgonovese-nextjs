@@ -114,13 +114,16 @@ export const getAllDays = async (slug: string): Promise<string[]> => {
   return [];
 };
 
-export const getAllMatch = async (slug: string): Promise<MatchDatum[]> => {
-  const { data } = await supabase
+export const getAllMatch = async (slug?: string): Promise<MatchDatum[]> => {
+  let query = supabase
     .from("match")
     .select("*, squad_home(*), squad_away(*), tournament_id!inner(*)")
-    .eq("tournament_id.slug", slug)
     .order("id", { ascending: true });
 
+  if(slug) query = query.eq("tournament_id.slug", slug);
+    
+  const { data } = await query;
+    
   return data ?? [];
 };
 
@@ -307,19 +310,23 @@ export const getMatchesWithResult = async (): Promise<MatchDatum[]> => {
  * @param field Campo in cui verrà giocata la partita
  */
 export const createMatch = async (
+  id: number,
   date: string,
   hour: string,
   selectedSquadHome: string,
   selectedSquadAway: string,
-  field: string
+  tournament: number,
+  field?: string,
 ) => {
   const response = await supabase.from("match").insert([
     {
+      id: id,
       day: date,
       hour: hour,
       squad_home: selectedSquadHome,
       squad_away: selectedSquadAway,
       field: field,
+      tournament_id: tournament
     },
   ]);
 };

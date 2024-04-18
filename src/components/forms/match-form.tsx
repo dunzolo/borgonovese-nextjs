@@ -11,12 +11,15 @@ import { useParams, useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 // #SUPABSE
@@ -54,6 +57,7 @@ const formSchema = z.object({
   score_away: z.coerce
     .number()
     .min(0, "Non puoi inserrie un valore minore di zero"),
+  update_result: z.boolean().default(false).optional(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -80,6 +84,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
     : {
         score_home: 0,
         score_away: 0,
+        update_result: false,
       };
 
   const form = useForm<ProductFormValues>({
@@ -101,26 +106,40 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
         outcome
       );
 
-      // recupero tutti i match delle due squadre coinvolte
-      const matchesBySquadHome: Match = await getMatchesBySquad(squad_home.id);
-      const matchesBySquadAway: Match = await getMatchesBySquad(squad_away.id);
+      if (!data.update_result) {
+        // recupero tutti i match delle due squadre coinvolte
+        const matchesBySquadHome: Match = await getMatchesBySquad(
+          squad_home.id
+        );
+        const matchesBySquadAway: Match = await getMatchesBySquad(
+          squad_away.id
+        );
 
-      // recupero i dati della classifica del rispettivo girone
-      const squadHome: SquadGroup[] = await getSquadsByGroup(
-        squad_home.group,
-        squad_home.id
-      );
+        // recupero i dati della classifica del rispettivo girone
+        const squadHome: SquadGroup[] = await getSquadsByGroup(
+          squad_home.group,
+          squad_home.id
+        );
 
-      const squadAway: SquadGroup[] = await getSquadsByGroup(
-        squad_away.group,
-        squad_away.id
-      );
+        const squadAway: SquadGroup[] = await getSquadsByGroup(
+          squad_away.group,
+          squad_away.id
+        );
 
-      updatePointsSquadHome(matchesBySquadHome, squadHome[0], squad_home.group);
-      updatePointsSquadAway(matchesBySquadAway, squadAway[0], squad_away.group);
+        updatePointsSquadHome(
+          matchesBySquadHome,
+          squadHome[0],
+          squad_home.group
+        );
+        updatePointsSquadAway(
+          matchesBySquadAway,
+          squadAway[0],
+          squad_away.group
+        );
 
-      if (action == BUTTON_TEXT_INSERT) {
-        setAction(BUTTON_TEXT_UPDATE);
+        if (action == BUTTON_TEXT_INSERT) {
+          setAction(BUTTON_TEXT_UPDATE);
+        }
       }
 
       toast({
@@ -137,7 +156,7 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
     } finally {
       setTimeout(() => {
         setLoading(false);
-        // router.refresh();
+        router.refresh();
       }, 1500);
     }
   };
@@ -193,6 +212,30 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
                         <Input type="number" className="w-[5rem]" {...field} />
                       </FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="space-x-2 mb-2">
+                <FormField
+                  control={form.control}
+                  name="update_result"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Fuori classifica
+                        </FormLabel>
+                        <FormDescription>
+                          Non verrà aggiornata la classifica.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
                     </FormItem>
                   )}
                 />
