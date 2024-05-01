@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { FormEvent } from "react";
 import { Heading } from "@/components/ui/heading";
 import { SquadGroup } from "@/models/SquadGroup";
-import { NewMatchForm } from "./getNewMatchForm";
+import NewMatchForm from "./getNewMatchForm";
 
 type Props = {
   squads: Squad[];

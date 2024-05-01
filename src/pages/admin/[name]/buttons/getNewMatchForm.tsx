@@ -13,7 +13,7 @@ interface NewMatchProps {
   slug: string;
 }
 
-export const NewMatchForm: React.FC<NewMatchProps> = ({ group, slug }) => {
+const NewMatchForm: React.FC<NewMatchProps> = ({ group, slug }) => {
   const [squads, setSquadCount] = useState<SquadGroup[]>([]);
   const [accoppiamenti, setAccoppiamenti] = useState<SquadGroup[]>([]);
 
@@ -59,7 +59,7 @@ export const NewMatchForm: React.FC<NewMatchProps> = ({ group, slug }) => {
       setSquadCount(squads);
     };
     caricaSquadreDaDatabase();
-  }, []);
+  }, [group]);
 
   useEffect(() => {
     const generaAccoppiamenti = (squadre: SquadGroup[]) => {
@@ -171,3 +171,5 @@ export const NewMatchForm: React.FC<NewMatchProps> = ({ group, slug }) => {
     </div>
   );
 };
+
+export default NewMatchForm;
