@@ -114,6 +114,11 @@ export const getAllDays = async (slug: string): Promise<string[]> => {
   return [];
 };
 
+/**
+ * Recupera tutti match presenti all'interno del sistema
+ * @param slug Slug del torneo per cui si vuole filtrare
+ * @returns 
+ */
 export const getAllMatch = async (slug?: string): Promise<MatchDatum[]> => {
   let query = supabase
     .from("match")
@@ -216,11 +221,36 @@ export const getRankingByGroup = async (
   return responses;
 };
 
+/**
+ * Recupera i singoli gironi presenti all'interno del torneo
+ * @param category Categoria di riferimento per cui si vuole filtrare
+ * @returns 
+ */
 export const getGroupsByCategory = async (category: string | undefined) => {
   const response = await supabase
     .from("squads")
     .select("group")
     .ilike("category", `%${category}%`);
+
+  if (response.data) {
+    const groups: string[] = response.data.map((entry) => entry.group);
+    const uniqueGroups = Array.from(new Set(groups)).sort();
+    return uniqueGroups;
+  }
+
+  return [];
+};
+
+/**
+ * Recupera i singoli gironi presenti all'interno del torneo
+ * @param slug Slug di riferimento per cui si vuole filtrare
+ * @returns 
+ */
+export const getGroupsByTournament = async (slug: string | undefined) => {
+  const response = await supabase
+    .from("squads")
+    .select("group, tournament_id!inner(*)")
+    .ilike("tournament_id.slug", `%${slug}%`);
 
   if (response.data) {
     const groups: string[] = response.data.map((entry) => entry.group);
@@ -246,6 +276,11 @@ export const getMatchesByDate = async (date: string): Promise<Match> => {
   return response.data ?? [];
 };
 
+/**
+ * Recupera tutte le partite filtrate per categaria
+ * @param category Categoria per cui bisogna filtrare
+ * @returns 
+ */
 export const getMatchesByCategory = async (
   category: string | undefined
 ): Promise<MatchDatum[]> => {
@@ -253,7 +288,8 @@ export const getMatchesByCategory = async (
     .from("match")
     .select("*, squad_home!inner(*), squad_away!inner(*)")
     .ilike("squad_home.category", `%${category}%`)
-    .order("id", { ascending: true });
+    .order("day", { ascending: true })
+    .order("hour", { ascending: true });
 
   return response.data ?? [];
 };
@@ -331,6 +367,11 @@ export const createMatch = async (
   ]);
 };
 
+/**
+ * Crea un nuovo girone all'interno del sistema
+ * @param group Nome della tabella che corrisponde al girone in fase di creazione
+ * @param id Id della squadra che farà parte del girone
+ */
 export const createGroup = async (
   group: string,
   id: number
@@ -347,6 +388,14 @@ export const createGroup = async (
 
 };
 
+/**
+ * Aggiorna i dati della partita
+ * @param id ID della partita da modificare
+ * @param day Nuovo valore da assegnare alla colonna DAY
+ * @param hour Nuovo valore da asseganre alla colonna HOUR
+ * @param field Nuovo valore da assegnare alla colonna FIELD
+ * @returns 
+ */
 export const updateMatch = async (
   id: string,
   day: string,
