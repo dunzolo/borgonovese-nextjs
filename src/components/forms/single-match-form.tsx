@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 // #NEXT
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 // #UI COMPONENTS
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,9 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Match, MatchDatum } from "@/models/Match";
+// #MODELS
+import { MatchDatum } from "@/models/Match";
+// #SUPABSE
 import { updateMatch } from "@/api/supabase";
-import Image from "next/image";
 
 const BUTTON_TEXT_INSERT = "Inserisci";
 const BUTTON_TEXT_UPDATE = "Aggiorna";
@@ -95,10 +97,8 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
       }
     } catch (error: any) {
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-        router.refresh();
-      }, 1500);
+      setLoading(false);
+      router.refresh();
     }
   };
 
@@ -123,9 +123,9 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
           <Image
             src={initialData.squad_home.logo}
             alt={initialData.squad_home.name.toLowerCase()}
-            width={50}
-            height={50}
-            // className="w-full h-auto"
+            width={512}
+            height={512}
+            className="w-12 h-12"
           />
           <div className="flex justify-between w-full">
             <span>{initialData.squad_home.name}</span>
@@ -133,7 +133,7 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
         </div>
         <div className="flex items-center text-2xl font-bold">
           <Image
-            src={initialData.squad_home.logo}
+            src={initialData.squad_away.logo}
             alt={initialData.squad_away.name.toLowerCase()}
             width={512}
             height={512}
@@ -143,12 +143,6 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
             <span>{initialData.squad_away.name}</span>
           </div>
         </div>
-        {/* <p>
-          {initialData.squad_home.name} {initialData.score_home}
-        </p>
-        <p>
-          {initialData.squad_away.name} {initialData.score_away}
-        </p> */}
       </div>
       <Separator />
       <Form {...form}>
@@ -157,9 +151,6 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
           className="space-y-8 w-full"
         >
           <div className="md:grid md:grid-cols-2 gap-8">
-            {/* //TODO: inserire loghi */}
-            {/* //TODO: in fase di creazione devono vedersi i campi compilabili */}
-
             <div className="flex gap-4">
               <FormField
                 control={form.control}
@@ -199,7 +190,6 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
               />
             </div>
 
-            {/* //TODO: inserire select per selezione campo */}
             <FormField
               control={form.control}
               name="field"

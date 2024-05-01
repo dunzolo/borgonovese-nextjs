@@ -75,7 +75,7 @@ export default function page({ groups, matches, categoryProps }: Props) {
                     bg_color ?? ""
                   }`}
                 >
-                  <CardTitle className="text-sm font-medium">
+                  <CardTitle className="text-sm font-medium text-white">
                     {data[0].squad_id.show_label_group
                       ? "GIRONE " + data[0].squad_id.group
                       : "GIRONE"}

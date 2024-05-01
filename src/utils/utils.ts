@@ -50,10 +50,10 @@ export const timeFormatHoursMinutes = (time: string) => {
  * @param squad squadra per cui devo aggiornare i dati della classfica
  * @param group girone della squadra
  */
-export const updatePointsSquadHome = async (
-  matchesBySquad: Match,
+export const updatePointsSquad = async (
+  matches: Match,
   squad: SquadGroup,
-  group: string,
+  group: string
 ) => {
   //azzero ogni volta il punteggio per gestire le modifiche dei punteggi delle partite
   squad.goal_scored = 0;
@@ -61,20 +61,35 @@ export const updatePointsSquadHome = async (
   squad.goal_difference = 0;
   squad.points = 0;
 
-  matchesBySquad.forEach((match: MatchDatum) => {
+  matches.forEach((match: MatchDatum) => {
     //assegno i punteggi quando la partita cointiene un risultato
     if (match.score_home != null && match.score_away != null) {
-      //verifico tramite booleano se la squadra ha giocato in casa oppure no per aggiornare la relativa classifica
-      squad.goal_scored += match.score_home;
-      squad.goal_conceded += match.score_away;
-      squad.goal_difference += (match.score_home - match.score_away);
+      // Se la mia squadra corrisponde alla squadra in trasferta controllo i punteggi trasferta (away)
+      if (match.squad_away.id === squad.squad_id.id) {
+        squad.goal_scored += match.score_away;
+        squad.goal_conceded += match.score_home;
+        squad.goal_difference += match.score_away - match.score_home;
 
-      if (match.score_home > match.score_away) {
-        squad.points += 3;
-      } else if (match.score_home === match.score_away) {
-        squad.points += 1;
-      } else {
-        squad.points += 0;
+        if (match.score_away > match.score_home) {
+          squad.points += 3;
+        } else if (match.score_away === match.score_home) {
+          squad.points += 1;
+        } else {
+          squad.points += 0;
+        }
+        // Se la mia squadra corrisponde alla squadra di casa controllo i punteggi casa (home)
+      } else if (match.squad_home.id === squad.squad_id.id) {
+        squad.goal_scored += match.score_home;
+        squad.goal_conceded += match.score_away;
+        squad.goal_difference += match.score_home - match.score_away;
+
+        if (match.score_home > match.score_away) {
+          squad.points += 3;
+        } else if (match.score_home === match.score_away) {
+          squad.points += 1;
+        } else {
+          squad.points += 0;
+        }
       }
     }
   });
@@ -89,51 +104,7 @@ export const updatePointsSquadHome = async (
   );
 };
 
-/**
- * Funzione che aggiorna i punteggi del girone in base ai goal realizzati
- * @param matchesBySquad array di tutte le partite del torneo della squadra
- * @param squad squadra per cui devo aggiornare i dati della classfica
- * @param group girone della squadra
- */
-export const updatePointsSquadAway = async (
-  matchesBySquad: Match,
-  squad: SquadGroup,
-  group: string,
-) => {
-  //azzero ogni volta il punteggio per gestire le modifiche dei punteggi delle partite
-  squad.goal_scored = 0;
-  squad.goal_conceded = 0;
-  squad.goal_difference = 0;
-  squad.points = 0;
-
-  matchesBySquad.forEach((match: MatchDatum) => {
-    //assegno i punteggi quando la partita cointiene un risultato
-    if (match.score_home != null && match.score_away != null) {
-      //verifico tramite booleano se la squadra ha giocato in casa oppure no per aggiornare la relativa classifica
-      squad.goal_scored += match.score_away;
-      squad.goal_conceded += match.score_home;
-      squad.goal_difference += (match.score_away - match.score_home);
-
-      if (match.score_away > match.score_home) {
-        squad.points += 3;
-      } else if (match.score_home === match.score_away) {
-        squad.points += 1;
-      } else {
-        squad.points += 0;
-      }
-    }
-  });
-
-  const response = await updatePointsGroup(
-    group,
-    squad.id,
-    squad.points,
-    squad.goal_scored,
-    squad.goal_conceded,
-    squad.goal_difference
-  );
-};
-
+//TODO: inserire commento
 export const getGroupedData = (data: SquadGroup[], category: string) => {
   // Filtra gli oggetti in base al campo "category"
   const groupedDataEsordienti = data.reduce<{ [key: string]: SquadGroup[] }>(
@@ -154,6 +125,7 @@ export const getGroupedData = (data: SquadGroup[], category: string) => {
   return groupedDataEsordienti;
 };
 
+//TODO: inserire commento
 export const getBackgroundColorCard = (category: string) => {
   switch (category.toLowerCase()) {
     case "2011":
@@ -175,6 +147,7 @@ export const getBackgroundColorCard = (category: string) => {
   }
 };
 
+//TODO: inserire commento
 export const translateGroup = (group: string) => {
   switch (group.toLowerCase()) {
     case "professionisti maschile":
@@ -187,3 +160,12 @@ export const translateGroup = (group: string) => {
       return group;
   }
 };
+
+export const getCustomWidthTabs = (arrayCategorieslenght: number) => {
+  switch(arrayCategorieslenght){
+    case 4:
+      return "w-1/4";
+    default:
+      return "w-full";
+  }
+}

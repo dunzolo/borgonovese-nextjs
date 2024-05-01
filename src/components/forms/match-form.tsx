@@ -35,9 +35,9 @@ import { SquadGroup } from "@/models/SquadGroup";
 import {
   dateFormatItalian,
   timeFormatHoursMinutes,
-  updatePointsSquadHome,
-  updatePointsSquadAway,
+  updatePointsSquad,
 } from "@/utils/utils";
+import Image from "next/image";
 
 const BUTTON_TEXT_INSERT = "Inserisci";
 const BUTTON_TEXT_UPDATE = "Aggiorna";
@@ -126,16 +126,8 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
           squad_away.id
         );
 
-        updatePointsSquadHome(
-          matchesBySquadHome,
-          squadHome[0],
-          squad_home.group
-        );
-        updatePointsSquadAway(
-          matchesBySquadAway,
-          squadAway[0],
-          squad_away.group
-        );
+        updatePointsSquad(matchesBySquadHome, squadHome[0], squad_home.group);
+        updatePointsSquad(matchesBySquadAway, squadAway[0], squad_away.group);
 
         if (action == BUTTON_TEXT_INSERT) {
           setAction(BUTTON_TEXT_UPDATE);
@@ -154,10 +146,8 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
         description: "There was a problem with your request.",
       });
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-        router.refresh();
-      }, 1500);
+      setLoading(false);
+      router.refresh();
     }
   };
 
@@ -187,14 +177,23 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
             </CardHeader>
             <CardContent className="p-4 pt-0">
               <div className="flex w-full items-center justify-between space-x-2 mb-2">
-                <span>{squad_home.name}</span>
+                <div className="flex items-center">
+                  <Image
+                    src={squad_home.logo}
+                    alt={squad_home.name.toLowerCase()}
+                    width={512}
+                    height={512}
+                    className="h-12 w-12"
+                  />
+                  <span>{squad_home.name}</span>
+                </div>
                 <FormField
                   control={form.control}
                   name="score_home"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input type="number" className="w-[5rem]" {...field} />
+                        <Input type="number" className="w-[3rem]" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -202,14 +201,23 @@ export const MatchForm: React.FC<MatchFormProps> = ({ initialData }) => {
                 />
               </div>
               <div className="flex w-full items-center justify-between space-x-2 mb-2">
-                <span>{squad_away.name}</span>
+                <div className="flex items-center">
+                  <Image
+                    src={squad_away.logo}
+                    alt={squad_away.name.toLowerCase()}
+                    width={512}
+                    height={512}
+                    className="h-12 w-12"
+                  />
+                  <span>{squad_away.name}</span>
+                </div>
                 <FormField
                   control={form.control}
                   name="score_away"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input type="number" className="w-[5rem]" {...field} />
+                        <Input type="number" className="w-[3rem]" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
