@@ -64,7 +64,7 @@ export default function Home({ tournament, categories }: Props) {
                 CALENDARIO COMPLETO
               </h4>
               <p className="text-sm text-muted-foreground">
-                Elenco di tutte le partite del girone
+                Elenco di tutte le partite del torneo
               </p>
             </div>
           </div>
