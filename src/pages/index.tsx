@@ -1,24 +1,9 @@
 import {
   getAllCategories,
-  getAllMatchGroupByDay,
   getAllCurrentYearTournaments,
   getAllSquads,
 } from "@/api/supabase";
-import RowMatch from "@/components/row-match/row-match";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Match, MatchDatum } from "@/models/Match";
 import { Tournament } from "@/models/Tournament";
 import { dateFormatItalian } from "@/utils/utils";
 import { GetServerSideProps } from "next";
@@ -90,7 +75,7 @@ export const TournamentCard = ({ tournament }: { tournament: Tournament }) => {
               {dateFormatItalian(tournament.date_end, options)}
             </div>
             <div>
-              ⚽️ {categories.length} categorie - {squads.length} squadre
+              🏆 {categories.length} categorie - {squads.length} squadre
             </div>
           </div>
           <Image

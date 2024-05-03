@@ -1,3 +1,4 @@
+import { Category } from "@/models/Category";
 import { Match, MatchDatum } from "@/models/Match";
 import { Squad } from "@/models/Squad";
 import { SquadGroup } from "@/models/SquadGroup";
@@ -41,23 +42,31 @@ export const getAllSquads = async (slug: string): Promise<Tournament[]> => {
 };
 
 /**
- * Recuperare l'elenco di tutte le squadre presenti
- * @returns
+ * Recupera l'elenco univoco delle squadre presenti
+ * @param slug Slug del torneo per cui si vuole filtrare
+ * @param category Categoria del torneo per cui si vuole filtrare
+ * @returns 
  */
-export const getAllDistinctSquads = async (slug: string): Promise<string[]> => {
-  const response = await supabase
+export const getAllDistinctSquads = async (
+  slug: string,
+  category?: string
+): Promise<string[]> => {
+  let query = supabase
     .from("squads")
     .select("*, tournament_id!inner(*)")
     .eq("tournament_id.slug", slug);
-  
-    if (response.data) {
-      const squads: string[] = response.data.map((entry) => entry.name);
-      const uniqueSquad = Array.from(new Set(squads)).sort();
-      return uniqueSquad;
-    }
-  
-    return [];
 
+  if (category) query = query.ilike("category", `%${category}%`);
+
+  const response = await query;
+
+  if (response.data) {
+    const squads: string[] = response.data.map((entry) => entry.name);
+    const uniqueSquad = Array.from(new Set(squads)).sort();
+    return uniqueSquad;
+  }
+
+  return [];
 };
 
 /**
@@ -77,6 +86,50 @@ export const getAllCategories = async (slug: string): Promise<string[]> => {
   }
 
   return [];
+};
+
+/**
+ * Recupera la singola categoria
+ * @param category Categoria per cui si vuole filtrare
+ * @returns 
+ */
+export const getSingleCategory = async (
+  category: string
+): Promise<Category | null> => {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .ilike("name", `%${category}%`);
+
+  if (error) {
+    console.error("Errore durante la ricerca della categoria:", error.message);
+    return null;
+  }
+
+  if (data && data.length > 0) {
+    const categoryData = data[0] as Category; // Assicurati che data[0] sia di tipo Category
+    return categoryData;
+  } else {
+    console.log("Nessuna categoria trovata per il nome:", category);
+    return null;
+  }
+};
+
+/**
+ * Recupera tutte le categorie del torneo
+ * @param slug Slug del torneo per cui si vuole filtrare
+ * @returns 
+ */
+export const getAllCategoriesTournament = async (
+  slug: string
+): Promise<Category[]> => {
+  const response = await supabase
+    .from("categories")
+    .select("*, tournament_id!inner(*)")
+    .eq("tournament_id.slug", slug)
+    .order("name", { ascending: true });
+
+  return response.data ?? [];
 };
 
 /**
@@ -138,16 +191,23 @@ export const getAllMatch = async (slug?: string): Promise<MatchDatum[]> => {
  * @returns 
  */
 export const getAllMatchGroupByDay = async (
-  slug: string
+  slug: string,
+  category?: string,
 ): Promise<{
   [key: string]: MatchDatum[];
 }> => {
-  const { data } = await supabase
+  let query = supabase
     .from("match")
-    .select("*, squad_home(*), squad_away(*), tournament_id!inner(*)")
+    .select(
+      "*, squad_home!inner(*), squad_away!inner(*), tournament_id!inner(*)"
+    )
     .eq("tournament_id.slug", slug)
     .order("day", { ascending: true })
     .order("hour", { ascending: true });
+
+  if(category) query = query.ilike("squad_home.category", `%${category}%`);
+
+  const { data } = await query;
 
   if (data) {
     // Creare un oggetto per raggruppare i dati per data

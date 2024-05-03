@@ -128,13 +128,13 @@ export const getGroupedData = (data: SquadGroup[], category: string) => {
 //TODO: inserire commento
 export const getBackgroundColorCard = (category: string) => {
   switch (category.toLowerCase()) {
-    case "2011":
+    case "esordienti 2011":
       return "bg-[#00B050]";
-    case "2012":
+    case "esordienti 2012":
       return "bg-[#974806]";
-    case "2013":
+    case "pulcini 2013":
       return "bg-[#FF00FF]";
-    case "2014":
+    case "pulcini 2014":
       return "bg-[#FFC000]";
     case "professionisti maschile":
       return "bg-[#05A9EE]";
