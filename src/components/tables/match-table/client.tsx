@@ -97,8 +97,8 @@ export const MatchClient: React.FC<MatchClientProps> = ({
         />
       </div>
       <Separator className="mt-3" />
-      <div className="py-3 grid grid-cols-2 w-full items-center gap-1.5 sticky top-[56px] bg-white z-[1]">
-        <div className="text-center">
+      <div className="py-3 grid grid-cols-2 w-full items-center gap-1.5 sticky top-[56px] bg-[#E4E8EA] z-[1]">
+        <div className="text-center [&_button]:bg-white">
           <Label>Nome squadra</Label>
           <Select onValueChange={handleFilterChangeSquad}>
             <SelectTrigger>
@@ -118,7 +118,7 @@ export const MatchClient: React.FC<MatchClientProps> = ({
             </SelectContent>
           </Select>
         </div>
-        <div className="text-center">
+        <div className="text-center [&_button]:bg-white">
           <Label>Categoria</Label>
           <Select onValueChange={handleFilterChangeCategory}>
             <SelectTrigger>

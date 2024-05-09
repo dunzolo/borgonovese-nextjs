@@ -114,7 +114,7 @@ export default function Home({
       </h3>
 
       <Tabs defaultValue="partite">
-        <div className="bg-white sticky top-[56px] py-2 z-[3]">
+        <div className="bg-[#E4E8EA] sticky top-[56px] py-2 z-[3]">
           <TabsList className="w-full">
             <TabsTrigger className="w-1/2" value="partite">
               Partite
@@ -125,8 +125,8 @@ export default function Home({
           </TabsList>
         </div>
         <TabsContent value="partite" className="!mt-0 space-y-4">
-          <div className="grid grid-cols-1 w-full items-center gap-1.5 sticky top-[100px] bg-white z-[3] py-2">
-            <div className="text-center">
+          <div className="grid grid-cols-1 w-full items-center gap-1.5 sticky top-[100px] bg-[#E4E8EA] z-[3] py-2">
+            <div className="text-center [&_button]:bg-white">
               <Label>Nome squadra</Label>
               <Select onValueChange={handleFilterChangeSquad}>
                 <SelectTrigger>
@@ -151,7 +151,7 @@ export default function Home({
           {filterData.map((matchesForDate, index) => (
             <div key={index} className="!mt-0">
               {matchesForDate[0]?.day ? (
-                <div className="sticky !top-[175px] bg-white z-[2] py-2">
+                <div className="sticky !top-[175px] bg-[#E4E8EA] z-[2] py-2">
                   <h2 className="text-center text-sm font-bold mb-2">
                     {dateFormatItalian(matchesForDate[0]?.day, options)}
                   </h2>

@@ -114,8 +114,8 @@ export default function Home({
       </h1>
       <h3 className="text-center !mt-0">{tournament.at(0)?.description}</h3>
 
-      <div className="grid grid-cols-2 w-full items-center gap-1.5 sticky top-[56px] bg-white z-[2] pb-2">
-        <div className="text-center">
+      <div className="grid grid-cols-2 w-full items-center gap-1.5 sticky top-[56px] bg-[#E4E8EA] z-[2] pb-2">
+        <div className="text-center [&_button]:bg-white">
           <Label>Nome squadra</Label>
           <Select onValueChange={handleFilterChangeSquad}>
             <SelectTrigger>
@@ -135,7 +135,7 @@ export default function Home({
             </SelectContent>
           </Select>
         </div>
-        <div className="text-center">
+        <div className="text-center [&_button]:bg-white">
           <Label>Categoria</Label>
           <Select onValueChange={handleFilterChangeCategory}>
             <SelectTrigger>
@@ -160,7 +160,7 @@ export default function Home({
       {filterData.map((matchesForDate, index) => (
         <div key={index}>
           {matchesForDate[0]?.day ? (
-            <div className="sticky top-[120px] bg-white z-[1]">
+            <div className="sticky top-[120px] bg-[#E4E8EA] z-[1]">
               <h2 className="text-center text-sm font-bold mb-2">
                 {dateFormatItalian(matchesForDate[0]?.day, options)}
               </h2>

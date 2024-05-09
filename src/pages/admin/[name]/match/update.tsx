@@ -91,7 +91,7 @@ export default function Update({ daysProps, slug }: Props) {
         </div>
         <Separator />
 
-        <div className="sticky top-[56px] z-[1] bg-white !mt-0 py-3">
+        <div className="sticky top-[56px] z-[1] bg-[#E4E8EA] !mt-0 py-3 [&_button]:bg-white">
           <Label>Seleziona la giornata</Label>
           <Select onValueChange={handleSelectDay}>
             <SelectTrigger className="w-full md:w-1/4">

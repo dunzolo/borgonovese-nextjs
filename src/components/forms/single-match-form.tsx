@@ -151,7 +151,7 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
           className="space-y-8 w-full"
         >
           <div className="md:grid md:grid-cols-2 gap-8">
-            <div className="flex gap-4">
+            <div className="flex gap-4 [&_input]:bg-white">
               <FormField
                 control={form.control}
                 name="day"
@@ -190,42 +190,44 @@ export const SingleMatchForm: React.FC<SquadFormProps> = ({
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="field"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Campo</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value !== null ? field.value : undefined}
-                    defaultValue={
-                      field.value !== null ? field.value : undefined
-                    }
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={
-                            field.value !== null ? field.value : undefined
-                          }
-                          placeholder="Scegli il campo"
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {fieldsData.map((fields) => (
-                        <SelectItem key={fields} value={fields}>
-                          {fields}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="[&_button]:bg-white">
+              <FormField
+                control={form.control}
+                name="field"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Campo</FormLabel>
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value !== null ? field.value : undefined}
+                      defaultValue={
+                        field.value !== null ? field.value : undefined
+                      }
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            defaultValue={
+                              field.value !== null ? field.value : undefined
+                            }
+                            placeholder="Scegli il campo"
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {fieldsData.map((fields) => (
+                          <SelectItem key={fields} value={fields}>
+                            {fields}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}

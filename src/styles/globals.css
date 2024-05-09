@@ -76,6 +76,7 @@
   }
   body {
     @apply bg-background text-foreground box-border;
+    background-color: rgb(228, 232, 234);
   }
 }
 
