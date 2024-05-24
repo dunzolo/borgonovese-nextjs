@@ -169,3 +169,7 @@ export const getCustomWidthTabs = (arrayCategorieslenght: number) => {
       return "w-full";
   }
 }
+
+export const removePrefix = (testo: string) => {
+  return testo.replace(/^group_/, ""); // Utilizza un'espressione regolare per rimuovere 'group_' solo se è all'inizio della stringa
+};
