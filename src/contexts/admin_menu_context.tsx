@@ -30,6 +30,12 @@ export const MenuContextProvider = ({ children }: { children: ReactNode }) => {
           icon: "trophy",
           label: "match",
         },
+        {
+          title: "Fasi finali",
+          href: `/admin/${name}/final-phase`,
+          icon: "trophy",
+          label: "fasi finali",
+        },
       ];
 
       setData(data);
