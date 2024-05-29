@@ -1,11 +1,25 @@
 import {
   createMatch,
+  createMatchFinalPhase,
   getAllMatch,
+  getAllMatchFinalPhase,
   getSquadsByGroup,
   getTournament,
 } from "@/api/supabase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { MatchDatum } from "@/models/Match";
 import { SquadGroup } from "@/models/SquadGroup";
+import { match } from "assert";
 import { useEffect, useState } from "react";
 
 interface NewMatchProps {
@@ -92,6 +106,10 @@ const NewMatchForm: React.FC<NewMatchProps> = ({ group, slug }) => {
     setForm({ ...form, [name]: value });
   };
 
+  const handleChangeSelectField = async (event: any) => {
+    setForm({ ...form, ["field"]: event });
+  };
+
   useEffect(() => {
     const caricaSquadreDaDatabase = async () => {
       const squads = await getSquadsByGroup(group);
@@ -132,81 +150,90 @@ const NewMatchForm: React.FC<NewMatchProps> = ({ group, slug }) => {
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData.entries());
 
-    const { day, hour, squad_home, squad_away } = data;
+    const { day, hour, squad_home, squad_away, field } = data;
 
-    const matches = await getAllMatch();
+    const matches = await getAllMatchFinalPhase();
     const tournament = await getTournament(slug as string);
 
-    await createMatch(
-      matches.length + 1,
+    await createMatchFinalPhase(
+      matches.length + 2,
       day as string,
       hour as string,
       squad_home as string,
       squad_away as string,
-      tournament[0].id
+      tournament[0].id,
+      field as string,
+      true
     );
   }
 
   return (
-    <div>
+    <div className="pb-16">
       <h1>Accoppiamenti del Girone</h1>
-      <form onSubmit={handleSubmitMatch}>
-        {accoppiamenti.map((partita, index) => (
-          <div key={index}>
-            <label>
-              Casa:
+      {accoppiamenti.map((partita, index) => (
+        <form onSubmit={handleSubmitMatch} className="mb-5" key={index}>
+          <div key={index} className="grid sm:grid-cols-2 gap-2 mb-3">
+            <div>
+              <Label>Casa:</Label>
               <input
                 type="hidden"
                 name="squad_home"
                 value={partita.casa.squad_id.id}
               />
-              <input
+              <Input
                 type="text"
                 name="squad_home_name"
                 value={partita.casa.squad_id.name}
                 readOnly
               />
-            </label>
-            <label>
-              Trasferta:
+            </div>
+            <div>
+              <Label>Trasferta:</Label>
               <input
                 type="hidden"
                 name="squad_away"
                 value={partita.trasferta.squad_id.id}
               />
-              <input
+              <Input
                 type="text"
                 name="squad_away_name"
                 value={partita.trasferta.squad_id.name}
                 readOnly
               />
-            </label>
-            <div>
-              <input
-                type="date"
-                name="day"
-                value={form.day}
-                onChange={handleChangeInput}
-              />
-              <input
-                type="time"
-                name="hour"
-                value={form.hour}
-                onChange={handleChangeInput}
-              />
-              {/* <select
-              name="field"
-              value={form.field}
-              onChange={handleChangeSelectField}
-            >
-              <option value="Campo 1">Campo 1</option>
-              <option value="Campo 2">Campo 2</option>
-            </select> */}
             </div>
-            <button type="submit">Salva Partita</button>
           </div>
-        ))}
-      </form>
+
+          <div className="grid md:grid-cols-4 gap-2 mb-3">
+            <Input
+              type="date"
+              name="day"
+              value={form.day}
+              onChange={handleChangeInput}
+            />
+            <Input
+              type="time"
+              name="hour"
+              value={form.hour}
+              onChange={handleChangeInput}
+            />
+            {/* <Select name="field" onValueChange={handleChangeSelectField}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Campo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="Campo 1">Campo 1</SelectItem>
+                  <SelectItem value="Campo 2">Campo 2</SelectItem>
+                  <SelectItem value="Campo 3">Campo 3</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select> */}
+            <Button className="w-1/2" type="submit">
+              Salva Partita
+            </Button>
+          </div>
+        </form>
+      ))}
     </div>
   );
 };

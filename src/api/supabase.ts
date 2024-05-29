@@ -666,3 +666,110 @@ export const createMatchFinalPhase = async (
     },
   ]);
 };
+
+export const getGroupsByCategoryFinalPhase = async (
+  category: string | undefined
+) => {
+  const response = await supabase
+    .from("squads")
+    .select("group_finals")
+    .ilike("category", `%${category}%`);
+
+  if (response.data) {
+    const groups: string[] = response.data.map((entry) => entry.group_finals);
+    const uniqueGroups = Array.from(new Set(groups)).sort();
+    return uniqueGroups;
+  }
+
+  return [];
+};
+
+/**
+ * Recupera tutti i record dalle tabelle dei gironi della fase finale del torneo
+ * @param groups Array di lettere dei gironi per cui vuoi filtrare
+ * @returns
+ */
+export const getRankingByFinalGroup = async (
+  groups: string[]
+): Promise<SquadGroup[][]> => {
+  const responses = await Promise.all(
+    groups.map(async (group) => {
+        const { data } = await supabase
+          .from(`${group}`)
+          .select("*, squad_id(*)")
+          .order("points", { ascending: false })
+          .order("goal_difference", { ascending: false })
+          .order("goal_scored", { ascending: false });
+
+          if(data) return data as SquadGroup[];
+
+          return [];
+    })
+  );
+
+  return responses ?? [];
+};
+
+/**
+ * 
+ * @param id 
+ * @param group_finals 
+ */
+export const updateSquadWithGroupFinal = async (
+  id: number,
+  group_finals: string
+) => {
+  const response = await supabase
+    .from("squads")
+    .update({ group_finals })
+    .eq("id", id);
+};
+
+/**
+ * Recupera tutte le partite del torneo suddivise per giorno, ordinate per giorno ed ora
+ * @param slug slug del torneo di riferimento
+ * @returns
+ */
+export const getAllMatchFinalPhaseGroupByDay = async (
+  slug: string,
+  category?: string,
+  isFinalPhase?: boolean
+): Promise<{
+  [key: string]: MatchDatum[];
+}> => {
+  let query = supabase
+    .from("match_final_phase")
+    .select(
+      "*, squad_home!inner(*), squad_away!inner(*), tournament_id!inner(*)"
+    )
+    .eq("tournament_id.slug", slug)
+    .order("day", { ascending: true })
+    .order("hour", { ascending: true });
+
+  if(category){
+    query = query.ilike("squad_home.category", `%${category}%`);
+  }  
+
+  if (isFinalPhase) {
+    query = query.eq("is_final_phase", isFinalPhase);
+  } else {
+    query = query.eq("is_final_phase", false);
+  }
+
+  const { data } = await query;
+
+  if (data) {
+    // Creare un oggetto per raggruppare i dati per data
+    const groupedData: { [key: string]: MatchDatum[] } = {};
+    for (const row of data) {
+      const dataValue = row.day; // Assumendo che la colonna si chiami "data"
+      if (!groupedData[dataValue]) {
+        groupedData[dataValue] = [];
+      }
+      groupedData[dataValue].push(row);
+    }
+    return groupedData ?? [];
+  }
+
+  return {};
+};

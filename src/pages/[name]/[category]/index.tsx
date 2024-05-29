@@ -1,7 +1,10 @@
 import {
   getAllDistinctSquads,
+  getAllMatchFinalPhaseGroupByDay,
   getAllMatchGroupByDay,
   getGroupsByCategory,
+  getGroupsByCategoryFinalPhase,
+  getRankingByFinalGroup,
   getRankingByGroup,
   getSingleCategory,
   getTournament,
@@ -35,7 +38,9 @@ type Props = {
   category: Category;
   squads: string[];
   matches: { [key: string]: MatchDatum[] };
+  matches_final_phase: { [key: string]: MatchDatum[] };
   groups: SquadGroup[][];
+  groups_final_phase: SquadGroup[][];
 };
 
 const options = {
@@ -50,6 +55,9 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const slug = context.params?.name?.toString();
   const category = context.params?.category?.toString();
+  const groupsCategoryFinalPhase = await getGroupsByCategoryFinalPhase(
+    category
+  );
 
   try {
     const groupsCategory = await getGroupsByCategory(category);
@@ -60,6 +68,14 @@ export const getServerSideProps: GetServerSideProps = async (
           slug as string,
           category as string
         ),
+        matches_final_phase: await getAllMatchFinalPhaseGroupByDay(
+          slug as string,
+          category as string,
+          true
+        ),
+        groups_final_phase: groupsCategoryFinalPhase[0]
+          ? await getRankingByFinalGroup(groupsCategoryFinalPhase)
+          : null,
         category: await getSingleCategory(category as string),
         groups: await getRankingByGroup(groupsCategory),
         squads: await getAllDistinctSquads(slug as string, category as string),
@@ -80,9 +96,11 @@ Home.getLayout = (page: any) => {
 export default function Home({
   category,
   matches,
+  matches_final_phase,
   tournament,
   squads,
   groups,
+  groups_final_phase,
 }: Props) {
   const [filterSquad, setFilterSquad] = useState("");
 
@@ -102,6 +120,20 @@ export default function Home({
           .includes(filterSquad.toLowerCase()) ||
         match.squad_away.name.toLowerCase().includes(filterSquad.toLowerCase())
     )
+  );
+
+  //Filtra i dati in base al campo "name" e "category"
+  const filterDataFinalPhase = Object.entries(matches_final_phase).map(
+    ([date, matchesForDate]) =>
+      matchesForDate.filter(
+        (match) =>
+          match.squad_home.name
+            .toLowerCase()
+            .includes(filterSquad.toLowerCase()) ||
+          match.squad_away.name
+            .toLowerCase()
+            .includes(filterSquad.toLowerCase())
+      )
   );
 
   return (
@@ -165,6 +197,27 @@ export default function Home({
               </div>
             </div>
           ))}
+
+          <>
+            <h3 className="font-bold text-center">FASE FINALE</h3>
+            {filterDataFinalPhase.map((matchesForDate, index) => (
+              <div key={index}>
+                {matchesForDate[0]?.day ? (
+                  <div className="sticky top-[175px] bg-[#E4E8EA] z-[2] py-2">
+                    <h2 className="text-center text-sm font-bold mb-2">
+                      {dateFormatItalian(matchesForDate[0]?.day, options)}
+                    </h2>
+                    <Separator className="h-[2px] mb-2" />
+                  </div>
+                ) : null}
+                <div className="grid gap-2 md:grid-cols-2 place-items-center">
+                  {matchesForDate.map((match) => (
+                    <RowMatch key={match.id} matchProps={match} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </>
         </TabsContent>
         <TabsContent value="gironi" className="space-y-4">
           {Object.entries(groups).map(([group, data]) => (
@@ -189,6 +242,35 @@ export default function Home({
               </div>
             </Card>
           ))}
+
+          {groups_final_phase && (
+            <>
+              {Object.entries(groups_final_phase).map(([group, data]) => {
+                if (data.length > 0) {
+                  return (
+                    <Card key={group}>
+                      <CardHeader
+                        className={clsx(
+                          "flex flex-row items-center justify-center space-y-0 p-2 rounded-t-xl opacity-90 text-white",
+                          getBackgroundColorCard(data[0].squad_id.category)
+                        )}
+                      >
+                        <CardTitle className="text-sm font-medium">
+                          {"GIRONE FINALE"}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-2">
+                        <GroupClient data={data} />
+                      </CardContent>
+                      <div className="flex-1 text-sm text-muted-foreground text-center space-x-2 py-2">
+                        Classifica aggiornata
+                      </div>
+                    </Card>
+                  );
+                }
+              })}
+            </>
+          )}
         </TabsContent>
       </Tabs>
     </div>

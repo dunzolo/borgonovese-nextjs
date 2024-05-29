@@ -2,6 +2,7 @@ import {
   getAllCategories,
   getAllDistinctSquads,
   getAllMatch,
+  getAllMatchFinalPhaseGroupByDay,
   getAllMatchGroupByDay,
   getAllSquads,
   getTournament,
@@ -21,15 +22,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Match, MatchDatum } from "@/models/Match";
 import { Squad } from "@/models/Squad";
 import { Tournament } from "@/models/Tournament";
 import { dateFormatItalian } from "@/utils/utils";
+import { Tabs, TabsContent } from "@radix-ui/react-tabs";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useState } from "react";
 
 type Props = {
   matches: { [key: string]: MatchDatum[] };
+  matches_final_phase: { [key: string]: MatchDatum[] };
   categories: string[];
   tournament: Tournament[];
   squads: string[];
@@ -51,6 +55,11 @@ export const getServerSideProps: GetServerSideProps = async (
     return {
       props: {
         matches: await getAllMatchGroupByDay(slug as string),
+        matches_final_phase: await getAllMatchFinalPhaseGroupByDay(
+          slug as string,
+          undefined,
+          true
+        ),
         categories: await getAllCategories(slug as string),
         squads: await getAllDistinctSquads(slug as string),
         tournament: await getTournament(slug as string),
@@ -70,6 +79,7 @@ Home.getLayout = (page: any) => {
 export default function Home({
   categories,
   matches,
+  matches_final_phase,
   tournament,
   squads,
 }: Props) {
@@ -107,6 +117,20 @@ export default function Home({
     )
   );
 
+  //Filtra i dati in base al campo "name" e "category"
+  const filterDataFinalPhase = Object.entries(matches_final_phase).map(
+    ([date, matchesForDate]) =>
+      matchesForDate.filter(
+        (match) =>
+          match.squad_home.name
+            .toLowerCase()
+            .includes(filterSquad.toLowerCase()) ||
+          match.squad_away.name
+            .toLowerCase()
+            .includes(filterSquad.toLowerCase())
+      )
+  );
+
   return (
     <div className="container flex-1 space-y-4 p-4 md:p-8">
       <h1 className="text-center text-2xl font-bold">
@@ -114,66 +138,103 @@ export default function Home({
       </h1>
       <h3 className="text-center !mt-0">{tournament.at(0)?.description}</h3>
 
-      <div className="grid grid-cols-2 w-full items-center gap-1.5 sticky top-[56px] bg-[#E4E8EA] z-[2] pb-2">
-        <div className="text-center [&_button]:bg-white">
-          <Label>Nome squadra</Label>
-          <Select onValueChange={handleFilterChangeSquad}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona la squadra" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="all">Tutte</SelectItem>
-                {squads.map((squad) => {
-                  return (
-                    <SelectItem key={squad} value={squad}>
-                      {squad}
-                    </SelectItem>
-                  );
-                })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+      <Tabs defaultValue="fase-iniziale">
+        <div className="bg-[#E4E8EA] sticky top-[56px] py-2 z-[3]">
+          <TabsList className="w-full">
+            <TabsTrigger className="w-1/2" value="fase-iniziale">
+              Fase iniziale
+            </TabsTrigger>
+            <TabsTrigger className="w-1/2" value="fase-finale">
+              Fase finale
+            </TabsTrigger>
+          </TabsList>
         </div>
-        <div className="text-center [&_button]:bg-white">
-          <Label>Categoria</Label>
-          <Select onValueChange={handleFilterChangeCategory}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleziona la categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="all">Tutte</SelectItem>
-                {categories.map((category) => {
-                  return (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  );
-                })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {filterData.map((matchesForDate, index) => (
-        <div key={index}>
-          {matchesForDate[0]?.day ? (
-            <div className="sticky top-[120px] bg-[#E4E8EA] z-[1]">
-              <h2 className="text-center text-sm font-bold mb-2">
-                {dateFormatItalian(matchesForDate[0]?.day, options)}
-              </h2>
-              <Separator className="h-[2px] mb-2" />
+        <TabsContent value="fase-iniziale">
+          <div className="grid grid-cols-2 w-full items-center gap-1.5 sticky top-[105px] bg-[#E4E8EA] z-[2] pb-2">
+            <div className="text-center [&_button]:bg-white">
+              <Label>Nome squadra</Label>
+              <Select onValueChange={handleFilterChangeSquad}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleziona la squadra" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all">Tutte</SelectItem>
+                    {squads.map((squad) => {
+                      return (
+                        <SelectItem key={squad} value={squad}>
+                          {squad}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
-          ) : null}
-          <div className="grid gap-2 md:grid-cols-2 place-items-center">
-            {matchesForDate.map((match) => (
-              <RowMatch key={match.id} matchProps={match} />
-            ))}
+            <div className="text-center [&_button]:bg-white">
+              <Label>Categoria</Label>
+              <Select onValueChange={handleFilterChangeCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleziona la categoria" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="all">Tutte</SelectItem>
+                    {categories.map((category) => {
+                      return (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        </div>
-      ))}
+
+          {filterData.map((matchesForDate, index) => (
+            <div key={index}>
+              {matchesForDate[0]?.day ? (
+                <div className="sticky top-[172px] bg-[#E4E8EA] z-[1]">
+                  <h2 className="text-center text-sm font-bold mb-2">
+                    {dateFormatItalian(matchesForDate[0]?.day, options)}
+                  </h2>
+                  <Separator className="h-[2px] mb-2" />
+                </div>
+              ) : null}
+              <div className="grid gap-2 md:grid-cols-2 place-items-center">
+                {matchesForDate.map((match) => (
+                  <RowMatch key={match.id} matchProps={match} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="fase-finale">
+          <>
+            <h3 className="font-bold text-center">FASE FINALE</h3>
+            {filterDataFinalPhase.map((matchesForDate, index) => (
+              <div key={index}>
+                {matchesForDate[0]?.day ? (
+                  <div className="sticky top-[105px] bg-[#E4E8EA] z-[2]">
+                    <h2 className="text-center text-sm font-bold mb-2">
+                      {dateFormatItalian(matchesForDate[0]?.day, options)}
+                    </h2>
+                    <Separator className="h-[2px] mb-2" />
+                  </div>
+                ) : null}
+                <div className="grid gap-2 md:grid-cols-2 place-items-center">
+                  {matchesForDate.map((match) => (
+                    <RowMatch key={match.id} matchProps={match} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
